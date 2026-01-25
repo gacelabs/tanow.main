@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TaNow Online - Your Ultimate Guide to Free IPTV Channels Worldwide. Discover, browse, and watch thousands of live TV channels from every corner of the globe.">
+    <meta name="keywords" content="IPTV, live TV, streaming, free channels, TV directory, international TV, online television">
+    <meta name="author" content="TaNow Online">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="TaNow Online - Global IPTV Channel Directory">
+    <meta property="og:description" content="Discover thousands of free IPTV channels from around the world. Stream live TV directly in your browser.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tanow.online/">
+    
+    <title>TaNow Online - Your Gateway to Global Live Television</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" data-testid="main-header">
+        <div class="header__container">
+            <a href="index.html" class="header__logo" data-testid="logo-link">
+                <i class="ph-duotone ph-television"></i>
+                <span>TaNow <span class="header__logo-accent">Online</span></span>
+            </a>
+            
+            <nav class="header__nav" data-testid="main-nav">
+                <a href="index.html" class="header__nav-link header__nav-link--active">Home</a>
+                <a href="pages/countries.html" class="header__nav-link">Countries</a>
+                <a href="pages/categories.html" class="header__nav-link">Categories</a>
+                <a href="pages/channels.html" class="header__nav-link">All Channels</a>
+                <a href="pages/about.html" class="header__nav-link">About</a>
+            </nav>
+            
+            <div class="header__actions">
+                <button class="header__search-btn" data-testid="search-toggle" aria-label="Search channels">
+                    <i class="ph ph-magnifying-glass"></i>
+                </button>
+                <button class="header__menu-btn" data-testid="mobile-menu-toggle" aria-label="Toggle menu">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Search Overlay -->
+        <div class="search-overlay" data-testid="search-overlay">
+            <div class="search-overlay__container">
+                <input type="text" class="search-overlay__input" placeholder="Search channels, countries, categories..." data-testid="search-input">
+                <button class="search-overlay__close" data-testid="search-close" aria-label="Close search">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="search-overlay__results" data-testid="search-results"></div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <nav class="mobile-nav" data-testid="mobile-nav">
+            <a href="index.html" class="mobile-nav__link mobile-nav__link--active">Home</a>
+            <a href="pages/countries.html" class="mobile-nav__link">Countries</a>
+            <a href="pages/categories.html" class="mobile-nav__link">Categories</a>
+            <a href="pages/channels.html" class="mobile-nav__link">All Channels</a>
+            <a href="pages/about.html" class="mobile-nav__link">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" data-testid="hero-section">
+            <div class="hero__bg">
+                <img src="https://images.pexels.com/photos/5202925/pexels-photo-5202925.jpeg" alt="Global streaming" loading="eager">
+                <div class="hero__overlay"></div>
+            </div>
+            <div class="hero__content">
+                <h1 class="hero__title" data-testid="hero-title">YOUR GATEWAY TO GLOBAL LIVE TELEVISION</h1>
+                <p class="hero__tagline">Stream the World, One Channel at a Time</p>
+                <p class="hero__description">Discover thousands of free IPTV channels from every corner of the globe. News, sports, entertainment, music – all streaming live, directly in your browser.</p>
+                <div class="hero__cta">
+                    <a href="pages/channels.html" class="btn btn--primary" data-testid="browse-channels-btn">
+                        <i class="ph ph-play-circle"></i>
+                        Browse Channels
+                    </a>
+                    <a href="pages/about.html" class="btn btn--secondary" data-testid="learn-more-btn">
+                        <i class="ph ph-info"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Slot: Leaderboard -->
+        <div class="ad-container" data-testid="ad-leaderboard-top">
+            <div class="ad-slot ad-slot--leaderboard">
+                <span class="ad-slot__label">Advertisement</span>
+                <!-- AdSense Code Here -->
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <section class="stats" data-testid="stats-section">
+            <div class="container">
+                <div class="stats__grid">
+                    <div class="stats__item" data-testid="stat-channels">
+                        <i class="ph-duotone ph-television-simple"></i>
+                        <span class="stats__number" id="total-channels">0</span>
+                        <span class="stats__label">Live Channels</span>
+                    </div>
+                    <div class="stats__item" data-testid="stat-countries">
+                        <i class="ph-duotone ph-globe-hemisphere-west"></i>
+                        <span class="stats__number" id="total-countries">0</span>
+                        <span class="stats__label">Countries</span>
+                    </div>
+                    <div class="stats__item" data-testid="stat-categories">
+                        <i class="ph-duotone ph-squares-four"></i>
+                        <span class="stats__number" id="total-categories">0</span>
+                        <span class="stats__label">Categories</span>
+                    </div>
+                    <div class="stats__item" data-testid="stat-languages">
+                        <i class="ph-duotone ph-translate"></i>
+                        <span class="stats__number" id="total-languages">0</span>
+                        <span class="stats__label">Languages</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Bento Grid -->
+        <section class="categories" data-testid="categories-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">EXPLORE BY CATEGORY</h2>
+                    <p class="section-subtitle">Find channels that match your interests</p>
+                </div>
+                <div class="categories__bento" data-testid="categories-grid">
+                    <!-- Categories loaded via JS -->
+                </div>
+                <div class="section-cta">
+                    <a href="pages/categories.html" class="btn btn--outline" data-testid="view-all-categories">
+                        View All Categories
+                        <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Countries -->
+        <section class="countries" data-testid="countries-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">BROWSE BY COUNTRY</h2>
+                    <p class="section-subtitle">Explore channels from around the world</p>
+                </div>
+                <div class="countries__grid" data-testid="countries-grid">
+                    <!-- Countries loaded via JS -->
+                </div>
+                <div class="section-cta">
+                    <a href="pages/countries.html" class="btn btn--outline" data-testid="view-all-countries">
+                        View All Countries
+                        <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Slot: In-Content -->
+        <div class="ad-container" data-testid="ad-in-content">
+            <div class="ad-slot ad-slot--rectangle">
+                <span class="ad-slot__label">Advertisement</span>
+                <!-- AdSense Code Here -->
+            </div>
+        </div>
+
+        <!-- Latest Channels -->
+        <section class="latest-channels" data-testid="latest-channels-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">POPULAR CHANNELS</h2>
+                    <p class="section-subtitle">Trending live streams from around the globe</p>
+                </div>
+                <div class="channels-grid" data-testid="latest-channels-grid">
+                    <!-- Channels loaded via JS -->
+                </div>
+                <div class="section-cta">
+                    <a href="pages/channels.html" class="btn btn--outline" data-testid="view-all-channels">
+                        Explore All Channels
+                        <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Section for SEO -->
+        <section class="content-section" data-testid="seo-content">
+            <div class="container">
+                <article class="content-article">
+                    <h2>Welcome to TaNow Online – Your Premier IPTV Channel Directory</h2>
+                    
+                    <p>In an era where entertainment knows no borders, <strong>TaNow Online</strong> emerges as your definitive guide to the vast world of Internet Protocol Television (IPTV). We've curated an extensive database of thousands of live television channels from virtually every country on Earth, bringing you a streaming experience that transcends geographical limitations. Whether you're an expatriate longing for news from home, a language learner seeking authentic content, or simply an adventurous viewer looking to explore global broadcasting, TaNow Online is your gateway to unlimited television entertainment.</p>
+                    
+                    <h3>What Makes TaNow Online Different?</h3>
+                    
+                    <p>Unlike scattered online resources, TaNow Online provides a meticulously organized, user-friendly platform that makes discovering new channels effortless. Our directory is powered by the comprehensive <a href="https://github.com/iptv-org/database" target="_blank" rel="noopener">IPTV-ORG database</a>, one of the largest open-source collections of publicly available IPTV streams. This means you get access to legitimate, freely broadcast channels – from major international networks to niche regional stations – all in one convenient location.</p>
+                    
+                    <p>Our platform features:</p>
+                    <ul>
+                        <li><strong>Comprehensive Country Coverage:</strong> Browse channels from over 200 countries and territories, each with dedicated pages featuring local networks, regional broadcasts, and international channels available in that region.</li>
+                        <li><strong>Category-Based Organization:</strong> Whether you're interested in news, sports, entertainment, documentary, kids' programming, music, or religious content, our category filters help you find exactly what you're looking for.</li>
+                        <li><strong>Built-In Stream Player:</strong> Watch channels directly on our website with our integrated HLS player – no additional software required. Simply click and start streaming.</li>
+                        <li><strong>Mobile-Responsive Design:</strong> Access TaNow Online from any device. Our mobile-first design ensures a seamless experience whether you're on a smartphone, tablet, or desktop computer.</li>
+                        <li><strong>Regular Updates:</strong> Our channel database is continuously updated to ensure stream availability and accuracy. New channels are added regularly as they become available.</li>
+                    </ul>
+                    
+                    <h3>How to Use TaNow Online</h3>
+                    
+                    <p>Getting started with TaNow Online is simple. Use the navigation menu to browse channels by <strong>Country</strong> or <strong>Category</strong>, or utilize our powerful search feature to find specific channels by name. Each channel listing provides essential information including the broadcast language, category, and direct stream access. Click the play button on any channel to launch our built-in player and start watching immediately.</p>
+                    
+                    <p>For users who prefer using their own media players, we also provide M3U playlist links compatible with popular applications like VLC Media Player, IPTV Smarters, and other M3U-compatible software. This flexibility ensures you can enjoy your favorite channels in whatever way suits your setup best.</p>
+                    
+                    <h3>Legal and Ethical Streaming</h3>
+                    
+                    <p>TaNow Online is committed to promoting legal streaming. All channels featured in our directory are from publicly available, freely broadcast sources. We do not host any streams ourselves – we simply provide organized links to content that is already freely available on the internet. We encourage all users to respect copyright laws in their respective jurisdictions and to support content creators through official channels when possible.</p>
+                    
+                    <h3>Join the Global Viewing Community</h3>
+                    
+                    <p>Television connects us to cultures, perspectives, and stories from around the world. At TaNow Online, we believe everyone should have access to this rich tapestry of global broadcasting. Start exploring today and discover channels you never knew existed – from Al Jazeera to ZDF, from local Philippine networks to Brazilian sports channels, the world of live television awaits you.</p>
+                    
+                    <p><em>Stream the world, one channel at a time.</em></p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" data-testid="main-footer">
+        <!-- Ad Slot: Footer Leaderboard -->
+        <div class="ad-container">
+            <div class="ad-slot ad-slot--leaderboard">
+                <span class="ad-slot__label">Advertisement</span>
+                <!-- AdSense Code Here -->
+            </div>
+        </div>
+        
+        <div class="footer__container">
+            <div class="footer__main">
+                <div class="footer__brand">
+                    <a href="index.html" class="footer__logo">
+                        <i class="ph-duotone ph-television"></i>
+                        <span>TaNow <span class="footer__logo-accent">Online</span></span>
+                    </a>
+                    <p class="footer__tagline">Stream the World, One Channel at a Time</p>
+                    <p class="footer__description">Your comprehensive directory for free IPTV channels from around the globe.</p>
+                </div>
+                
+                <div class="footer__links">
+                    <div class="footer__column">
+                        <h4>Browse</h4>
+                        <ul>
+                            <li><a href="pages/countries.html">By Country</a></li>
+                            <li><a href="pages/categories.html">By Category</a></li>
+                            <li><a href="pages/channels.html">All Channels</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__column">
+                        <h4>Information</h4>
+                        <ul>
+                            <li><a href="pages/about.html">About Us</a></li>
+                            <li><a href="pages/faq.html">FAQ</a></li>
+                            <li><a href="pages/contact.html">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__column">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="pages/privacy.html">Privacy Policy</a></li>
+                            <li><a href="pages/terms.html">Terms of Service</a></li>
+                            <li><a href="pages/disclaimer.html">Disclaimer</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer__bottom">
+                <p>&copy; 2025 TaNow Online. All rights reserved.</p>
+                <p class="footer__disclaimer">TaNow Online does not host any streams. We provide links to publicly available content. Please respect copyright laws in your jurisdiction.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Player Modal -->
+    <div class="player-modal" data-testid="player-modal">
+        <div class="player-modal__backdrop"></div>
+        <div class="player-modal__container">
+            <div class="player-modal__header">
+                <div class="player-modal__channel-info">
+                    <img src="" alt="" class="player-modal__logo" data-testid="player-channel-logo">
+                    <div>
+                        <h3 class="player-modal__title" data-testid="player-channel-name"></h3>
+                        <span class="player-modal__meta" data-testid="player-channel-meta"></span>
+                    </div>
+                </div>
+                <button class="player-modal__close" data-testid="player-close" aria-label="Close player">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="player-modal__video-wrapper">
+                <video id="video-player" class="player-modal__video" controls playsinline data-testid="video-player"></video>
+                <div class="player-modal__loading" data-testid="player-loading">
+                    <i class="ph-duotone ph-spinner"></i>
+                    <span>Loading stream...</span>
+                </div>
+                <div class="player-modal__error" data-testid="player-error">
+                    <i class="ph-duotone ph-warning-circle"></i>
+                    <span>Stream unavailable. Please try another channel.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
