@@ -1,28 +1,12 @@
+"""
+TaNow Online - Minimal Health Check Server
+This is a static site - backend only provides health checks for deployment.
+All app functionality is in the frontend using HTML5, CSS3, jQuery.
+"""
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="TaNow Online API", version="1.0.0")
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = FastAPI(title="TaNow Online", version="1.0.0", docs_url=None, redoc_url=None)
 
 @app.get("/api/health")
-async def health_check():
-    """Health check endpoint for deployment verification"""
-    return {"status": "healthy", "service": "TaNow Online API"}
-
-@app.get("/api/info")
-async def get_info():
-    """Get application information"""
-    return {
-        "name": "TaNow Online",
-        "tagline": "Stream the World, One Channel at a Time",
-        "description": "IPTV Channel Directory",
-        "version": "1.0.0"
-    }
+async def health():
+    return {"status": "healthy", "app": "TaNow Online", "type": "static-site"}
