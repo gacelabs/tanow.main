@@ -1529,3 +1529,34 @@ h4 { font-size: 1.25rem; }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+/* Favorite Indicator */
+.channel-card__fav {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    color: #FF3B5C;
+    font-size: 1.25rem;
+}
+
+.player-modal__fav-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+    margin-right: 0.5rem;
+}
+
+.player-modal__fav-btn:hover {
+    background: var(--bg-card-hover);
+    color: #FF3B5C;
+}
+
+.player-modal__fav-btn i {
+    font-size: 1.25rem;
+}
