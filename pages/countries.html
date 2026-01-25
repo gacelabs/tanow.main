@@ -15,16 +15,16 @@
     <!-- Header -->
     <header class="header" data-testid="main-header">
         <div class="header__container">
-            <a href="../index.html" class="header__logo" data-testid="logo-link">
+            <a href="..//" class="header__logo" data-testid="logo-link">
                 <i class="ph-duotone ph-television"></i>
                 <span>TaNow <span class="header__logo-accent">Online</span></span>
             </a>
             <nav class="header__nav" data-testid="main-nav">
-                <a href="../index.html" class="header__nav-link">Home</a>
-                <a href="countries.html" class="header__nav-link header__nav-link--active">Countries</a>
-                <a href="categories.html" class="header__nav-link">Categories</a>
-                <a href="channels.html" class="header__nav-link">All Channels</a>
-                <a href="about.html" class="header__nav-link">About</a>
+                <a href="..//" class="header__nav-link">Home</a>
+                <a href="countries" class="header__nav-link header__nav-link--active">Countries</a>
+                <a href="categories" class="header__nav-link">Categories</a>
+                <a href="channels" class="header__nav-link">All Channels</a>
+                <a href="about" class="header__nav-link">About</a>
             </nav>
             <div class="header__actions">
                 <button class="header__search-btn" data-testid="search-toggle" aria-label="Search">
@@ -45,11 +45,11 @@
             <div class="search-overlay__results" data-testid="search-results"></div>
         </div>
         <nav class="mobile-nav" data-testid="mobile-nav">
-            <a href="../index.html" class="mobile-nav__link">Home</a>
-            <a href="countries.html" class="mobile-nav__link mobile-nav__link--active">Countries</a>
-            <a href="categories.html" class="mobile-nav__link">Categories</a>
-            <a href="channels.html" class="mobile-nav__link">All Channels</a>
-            <a href="about.html" class="mobile-nav__link">About</a>
+            <a href="..//" class="mobile-nav__link">Home</a>
+            <a href="countries" class="mobile-nav__link mobile-nav__link--active">Countries</a>
+            <a href="categories" class="mobile-nav__link">Categories</a>
+            <a href="channels" class="mobile-nav__link">All Channels</a>
+            <a href="about" class="mobile-nav__link">About</a>
         </nav>
     </header>
 
@@ -122,7 +122,7 @@
         <div class="footer__container">
             <div class="footer__main">
                 <div class="footer__brand">
-                    <a href="../index.html" class="footer__logo">
+                    <a href="..//" class="footer__logo">
                         <i class="ph-duotone ph-television"></i>
                         <span>TaNow <span class="footer__logo-accent">Online</span></span>
                     </a>
@@ -132,17 +132,17 @@
                     <div class="footer__column">
                         <h4>Browse</h4>
                         <ul>
-                            <li><a href="countries.html">By Country</a></li>
-                            <li><a href="categories.html">By Category</a></li>
-                            <li><a href="channels.html">All Channels</a></li>
+                            <li><a href="countries">By Country</a></li>
+                            <li><a href="categories">By Category</a></li>
+                            <li><a href="channels">All Channels</a></li>
                         </ul>
                     </div>
                     <div class="footer__column">
                         <h4>Legal</h4>
                         <ul>
-                            <li><a href="privacy.html">Privacy Policy</a></li>
-                            <li><a href="terms.html">Terms of Service</a></li>
-                            <li><a href="disclaimer.html">Disclaimer</a></li>
+                            <li><a href="privacy">Privacy Policy</a></li>
+                            <li><a href="terms">Terms of Service</a></li>
+                            <li><a href="disclaimer">Disclaimer</a></li>
                         </ul>
                     </div>
                 </div>
@@ -257,7 +257,7 @@
 
             filtered.forEach(country => {
                 const card = `
-                    <a href="channels.html?country=${country.code}" class="country-card" data-testid="country-${country.code}">
+                    <a href="channels?country=${country.code}" class="country-card" data-testid="country-${country.code}">
                         <span class="country-card__flag">${country.flag}</span>
                         <div class="country-card__info">
                             <span class="country-card__name">${country.name}</span>

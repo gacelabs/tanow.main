@@ -15,16 +15,16 @@
     <!-- Header -->
     <header class="header" data-testid="main-header">
         <div class="header__container">
-            <a href="../index.html" class="header__logo" data-testid="logo-link">
+            <a href="..//" class="header__logo" data-testid="logo-link">
                 <i class="ph-duotone ph-television"></i>
                 <span>TaNow <span class="header__logo-accent">Online</span></span>
             </a>
             <nav class="header__nav" data-testid="main-nav">
-                <a href="../index.html" class="header__nav-link">Home</a>
-                <a href="countries.html" class="header__nav-link">Countries</a>
-                <a href="categories.html" class="header__nav-link">Categories</a>
-                <a href="channels.html" class="header__nav-link header__nav-link--active">All Channels</a>
-                <a href="about.html" class="header__nav-link">About</a>
+                <a href="..//" class="header__nav-link">Home</a>
+                <a href="countries" class="header__nav-link">Countries</a>
+                <a href="categories" class="header__nav-link">Categories</a>
+                <a href="channels" class="header__nav-link header__nav-link--active">All Channels</a>
+                <a href="about" class="header__nav-link">About</a>
             </nav>
             <div class="header__actions">
                 <button class="header__search-btn" data-testid="search-toggle" aria-label="Search">
@@ -45,11 +45,11 @@
             <div class="search-overlay__results" data-testid="search-results"></div>
         </div>
         <nav class="mobile-nav" data-testid="mobile-nav">
-            <a href="../index.html" class="mobile-nav__link">Home</a>
-            <a href="countries.html" class="mobile-nav__link">Countries</a>
-            <a href="categories.html" class="mobile-nav__link">Categories</a>
-            <a href="channels.html" class="mobile-nav__link mobile-nav__link--active">All Channels</a>
-            <a href="about.html" class="mobile-nav__link">About</a>
+            <a href="..//" class="mobile-nav__link">Home</a>
+            <a href="countries" class="mobile-nav__link">Countries</a>
+            <a href="categories" class="mobile-nav__link">Categories</a>
+            <a href="channels" class="mobile-nav__link mobile-nav__link--active">All Channels</a>
+            <a href="about" class="mobile-nav__link">About</a>
         </nav>
     </header>
 
@@ -125,7 +125,7 @@
         <div class="footer__container">
             <div class="footer__main">
                 <div class="footer__brand">
-                    <a href="../index.html" class="footer__logo">
+                    <a href="..//" class="footer__logo">
                         <i class="ph-duotone ph-television"></i>
                         <span>TaNow <span class="footer__logo-accent">Online</span></span>
                     </a>
@@ -135,17 +135,17 @@
                     <div class="footer__column">
                         <h4>Browse</h4>
                         <ul>
-                            <li><a href="countries.html">By Country</a></li>
-                            <li><a href="categories.html">By Category</a></li>
-                            <li><a href="channels.html">All Channels</a></li>
+                            <li><a href="countries">By Country</a></li>
+                            <li><a href="categories">By Category</a></li>
+                            <li><a href="channels">All Channels</a></li>
                         </ul>
                     </div>
                     <div class="footer__column">
                         <h4>Legal</h4>
                         <ul>
-                            <li><a href="privacy.html">Privacy Policy</a></li>
-                            <li><a href="terms.html">Terms of Service</a></li>
-                            <li><a href="disclaimer.html">Disclaimer</a></li>
+                            <li><a href="privacy">Privacy Policy</a></li>
+                            <li><a href="terms">Terms of Service</a></li>
+                            <li><a href="disclaimer">Disclaimer</a></li>
                         </ul>
                     </div>
                 </div>
@@ -175,7 +175,7 @@
                 </button>
             </div>
             <div class="player-modal__video-wrapper">
-                <video id="video-player" class="player-modal__video" controls playsinline data-testid="video-player"></video>
+                <video id="video-player" class="player-modal__video" controls autoplay muted playsinline data-testid="video-player"></video>
                 <div class="player-modal__loading" data-testid="player-loading">
                     <i class="ph-duotone ph-spinner"></i>
                     <span>Loading stream...</span>
@@ -197,6 +197,7 @@
         let streamsData = [];
         let countriesData = [];
         let categoriesData = [];
+        let logosData = [];
         let currentPage = 1;
         const perPage = 24;
         let hlsPlayer = null;
@@ -214,17 +215,19 @@
             const categoryFilter = params.get('category');
 
             try {
-                const [channels, streams, countries, categories] = await Promise.all([
+                const [channels, streams, countries, categories, logos] = await Promise.all([
                     fetch(`${API_BASE}/channels.json`).then(r => r.json()),
                     fetch(`${API_BASE}/streams.json`).then(r => r.json()),
                     fetch(`${API_BASE}/countries.json`).then(r => r.json()),
-                    fetch(`${API_BASE}/categories.json`).then(r => r.json())
+                    fetch(`${API_BASE}/categories.json`).then(r => r.json()),
+					fetch(`${API_BASE}/logos.json`).then(r => r.json())
                 ]);
 
                 channelsData = channels;
                 streamsData = streams;
                 countriesData = countries;
                 categoriesData = categories;
+				logosData = logos;
 
                 // Populate filter dropdowns
                 populateFilters();
@@ -393,14 +396,16 @@
                 const stream = streamMap[channel.id];
                 const country = countriesData.find(c => c.code === channel.country);
                 const category = channel.categories && channel.categories[0] ? channel.categories[0] : 'general';
+				const defaultLogo = `https://placehold.co/320x180?text=${encodeURIComponent(channel.name.substring(0, 10))}`;
                 
                 const card = `
                     <div class="channel-card" data-testid="channel-${channel.id}"
                          onclick="playChannel('${encodeURIComponent(stream.url)}', '${escapeHtml(channel.name)}', '${country ? country.name : ''}', '${category}')">
                         <div class="channel-card__thumbnail">
-                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-card) 100%);">
-                                <span style="font-size: 1.5rem; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0.5rem;">${escapeHtml(channel.name.substring(0, 15))}</span>
-                            </div>
+                            <img src="${logosData.find(logo => logo.channel === channel.id)?.url || defaultLogo}" 
+								alt="${escapeHtml(channel.name)}" 
+								class="channel-card__logo"
+								loading="lazy">
                             <div class="channel-card__play">
                                 <i class="ph-fill ph-play-circle"></i>
                             </div>
@@ -478,7 +483,7 @@
         function goToPage(page) {
             currentPage = page;
             renderChannels();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function performQuickSearch(query) {
@@ -542,7 +547,7 @@
         function initHLSPlayer(videoElement, streamUrl) {
             stopPlayer();
             
-            if (Hls.isSupported()) {
+            /* if (Hls.isSupported()) {
                 hlsPlayer = new Hls({
                     debug: false,
                     enableWorker: true,
@@ -576,7 +581,72 @@
             } else {
                 $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
                 $('[data-testid="player-error"]').addClass('player-modal__error--active');
-            }
+            } */
+			if (streamUrl.endsWith(".m3u8")) {
+				if (Hls.isSupported()) {
+					hlsPlayer = new Hls({
+						debug: false,
+						enableWorker: true,
+						lowLatencyMode: true
+					});
+
+					hlsPlayer.loadSource(streamUrl);
+					hlsPlayer.attachMedia(videoElement);
+
+					hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
+						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+						videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+					});
+
+					hlsPlayer.on(Hls.Events.ERROR, function (event, data) {
+						if (data.fatal) {
+							$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+							$('[data-testid="player-error"]').addClass('player-modal__error--active');
+							console.error('HLS Error:', data);
+						}
+					});
+
+				} else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+					// Native HLS support (Safari)
+					videoElement.src = streamUrl;
+					videoElement.addEventListener('loadedmetadata', function () {
+						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+						videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+					});
+
+					videoElement.addEventListener('error', function () {
+						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+						$('[data-testid="player-error"]').addClass('player-modal__error--active');
+					});
+				} else {
+					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+				}
+			} else if (streamUrl.endsWith(".mpd")) {
+				// DASH playback
+				const player = dashjs.MediaPlayer().create();
+				player.initialize(videoElement, streamUrl, true);
+				player.on("error", (e) => {
+					console.error("DASH error", e);
+					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+				});
+				window.dashPlayer = player;
+			} else {
+				const source = document.createElement('source');
+				source.src = streamUrl;
+				if (streamUrl.endsWith('.mp4')) {
+					source.type = 'video/mp4';
+				} else {
+					source.type = 'application/x-mpegurl';
+				}
+				videoElement.appendChild(source);
+				videoElement.load();
+				videoElement.play().catch(() => {
+					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+				});
+			}
         }
 
         function stopPlayer() {

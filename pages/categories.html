@@ -15,16 +15,16 @@
     <!-- Header -->
     <header class="header" data-testid="main-header">
         <div class="header__container">
-            <a href="../index.html" class="header__logo" data-testid="logo-link">
+            <a href="..//" class="header__logo" data-testid="logo-link">
                 <i class="ph-duotone ph-television"></i>
                 <span>TaNow <span class="header__logo-accent">Online</span></span>
             </a>
             <nav class="header__nav" data-testid="main-nav">
-                <a href="../index.html" class="header__nav-link">Home</a>
-                <a href="countries.html" class="header__nav-link">Countries</a>
-                <a href="categories.html" class="header__nav-link header__nav-link--active">Categories</a>
-                <a href="channels.html" class="header__nav-link">All Channels</a>
-                <a href="about.html" class="header__nav-link">About</a>
+                <a href="..//" class="header__nav-link">Home</a>
+                <a href="countries" class="header__nav-link">Countries</a>
+                <a href="categories" class="header__nav-link header__nav-link--active">Categories</a>
+                <a href="channels" class="header__nav-link">All Channels</a>
+                <a href="about" class="header__nav-link">About</a>
             </nav>
             <div class="header__actions">
                 <button class="header__menu-btn" data-testid="mobile-menu-toggle" aria-label="Toggle menu">
@@ -33,11 +33,11 @@
             </div>
         </div>
         <nav class="mobile-nav" data-testid="mobile-nav">
-            <a href="../index.html" class="mobile-nav__link">Home</a>
-            <a href="countries.html" class="mobile-nav__link">Countries</a>
-            <a href="categories.html" class="mobile-nav__link mobile-nav__link--active">Categories</a>
-            <a href="channels.html" class="mobile-nav__link">All Channels</a>
-            <a href="about.html" class="mobile-nav__link">About</a>
+            <a href="..//" class="mobile-nav__link">Home</a>
+            <a href="countries" class="mobile-nav__link">Countries</a>
+            <a href="categories" class="mobile-nav__link mobile-nav__link--active">Categories</a>
+            <a href="channels" class="mobile-nav__link">All Channels</a>
+            <a href="about" class="mobile-nav__link">About</a>
         </nav>
     </header>
 
@@ -100,7 +100,7 @@
         <div class="footer__container">
             <div class="footer__main">
                 <div class="footer__brand">
-                    <a href="../index.html" class="footer__logo">
+                    <a href="..//" class="footer__logo">
                         <i class="ph-duotone ph-television"></i>
                         <span>TaNow <span class="footer__logo-accent">Online</span></span>
                     </a>
@@ -110,17 +110,17 @@
                     <div class="footer__column">
                         <h4>Browse</h4>
                         <ul>
-                            <li><a href="countries.html">By Country</a></li>
-                            <li><a href="categories.html">By Category</a></li>
-                            <li><a href="channels.html">All Channels</a></li>
+                            <li><a href="countries">By Country</a></li>
+                            <li><a href="categories">By Category</a></li>
+                            <li><a href="channels">All Channels</a></li>
                         </ul>
                     </div>
                     <div class="footer__column">
                         <h4>Legal</h4>
                         <ul>
-                            <li><a href="privacy.html">Privacy Policy</a></li>
-                            <li><a href="terms.html">Terms of Service</a></li>
-                            <li><a href="disclaimer.html">Disclaimer</a></li>
+                            <li><a href="privacy">Privacy Policy</a></li>
+                            <li><a href="terms">Terms of Service</a></li>
+                            <li><a href="disclaimer">Disclaimer</a></li>
                         </ul>
                     </div>
                 </div>
@@ -167,21 +167,37 @@
         };
 
         const CATEGORY_IMAGES = {
-            'news': 'https://images.unsplash.com/photo-1586448911122-f74aa8e3e4b6?w=600',
-            'sports': 'https://images.pexels.com/photos/200986/pexels-photo-200986.jpeg?w=600',
-            'entertainment': 'https://images.pexels.com/photos/1983046/pexels-photo-1983046.jpeg?w=600',
-            'movies': 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?w=600',
-            'music': 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?w=600',
-            'kids': 'https://images.pexels.com/photos/1148998/pexels-photo-1148998.jpeg?w=600',
-            'documentary': 'https://images.pexels.com/photos/3617500/pexels-photo-3617500.jpeg?w=600',
-            'general': 'https://images.pexels.com/photos/5202925/pexels-photo-5202925.jpeg?w=600',
-            'education': 'https://images.pexels.com/photos/256395/pexels-photo-256395.jpeg?w=600',
-            'religious': 'https://images.pexels.com/photos/208371/pexels-photo-208371.jpeg?w=600',
-            'cooking': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=600',
-            'travel': 'https://images.pexels.com/photos/386009/pexels-photo-386009.jpeg?w=600',
-            'science': 'https://images.pexels.com/photos/2156/sky-earth-space-working.jpg?w=600',
-            'lifestyle': 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?w=600',
-            'business': 'https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?w=600'
+			'general': '../images/general.jpeg',
+			'news': '../images/news.png',
+			'sports': '../images/sports.jpeg',
+			'entertainment': '../images/entertainment.jpeg',
+			'movies': '../images/movies.jpeg',
+			'music': '../images/music.jpeg',
+			'kids': '../images/kids.jpeg',
+			'documentary': '../images/documentary.jpeg',
+			'shop': '../images/shop.jpg',
+			'animation': '../images/animation.jpg',
+			'auto': '../images/auto.jpg',
+			'business': '../images/business.jpeg',
+			'classic': '../images/classic.jpg',
+			'comedy': '../images/comedy.jpg',
+			'cooking': '../images/cooking.jpeg',
+			'culture': '../images/culture.jpg',
+			'education': '../images/education.jpeg',
+			'family': '../images/family.jpg',
+			'legislative': '../images/legislative.jpg',
+			'lifestyle': '../images/lifestyle.jpeg',
+			'outdoor': '../images/outdoor.jpg',
+			'relax': '../images/relax.jpg',
+			'religious': '../images/religious.jpeg',
+			'science': '../images/science.jpg',
+			'series': '../images/series.jpg',
+			'travel': '../images/travel.jpeg',
+			'weather': '../images/weather.jpg',
+			'xxx': '../images/xxx.jpg',
+			'legislative': '../images/legislative.jpg',
+			'interactive': '../images/interactive.jpg',
+			'public': '../images/public.jpg',
         };
 
         $(document).ready(function() {
@@ -236,9 +252,9 @@
                 const image = CATEGORY_IMAGES[category.id] || CATEGORY_IMAGES['general'];
                 
                 const card = `
-                    <a href="channels.html?category=${category.id}" class="category-card" data-testid="category-${category.id}">
+                    <a href="channels?category=${category.id}" class="category-card" data-testid="category-${category.id}">
                         <div class="category-card__bg">
-                            <img src="${image}" alt="${category.name}" loading="lazy">
+                            <img src="${image}?t=${Date.now()}" alt="${category.name}" loading="lazy">
                         </div>
                         <div class="category-card__overlay"></div>
                         <div class="category-card__content">
