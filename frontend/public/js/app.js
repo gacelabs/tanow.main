@@ -1,17 +1,18 @@
 /**
- * TaNow Online - Main Application JavaScript
- * IPTV Channel Directory
+ * TaNow Online - Pure Static Site
+ * Tech Stack: HTML5, CSS3, jQuery
+ * Data Source: https://iptv-org.github.io/api
+ * Storage: localStorage for favorites
  */
 
-// API Endpoints
+// API Endpoints (iptv-org public API)
 const API_BASE = 'https://iptv-org.github.io/api';
 const API = {
     channels: `${API_BASE}/channels.json`,
     streams: `${API_BASE}/streams.json`,
     categories: `${API_BASE}/categories.json`,
     countries: `${API_BASE}/countries.json`,
-    languages: `${API_BASE}/languages.json`,
-    logos: `${API_BASE}/logos.json`
+    languages: `${API_BASE}/languages.json`
 };
 
 // Category Icons Mapping
@@ -65,14 +66,85 @@ let appData = {
     categories: [],
     countries: [],
     languages: [],
-    logos: [],
     isLoading: true
 };
 
 // HLS Player Instance
 let hlsPlayer = null;
 
-// DOM Ready
+// ============================================
+// LOCALSTORAGE HELPERS (No Database Required)
+// ============================================
+
+const Storage = {
+    // Get favorites from localStorage
+    getFavorites: function() {
+        try {
+            return JSON.parse(localStorage.getItem('tanow_favorites')) || [];
+        } catch (e) {
+            return [];
+        }
+    },
+    
+    // Save favorites to localStorage
+    saveFavorites: function(favorites) {
+        try {
+            localStorage.setItem('tanow_favorites', JSON.stringify(favorites));
+        } catch (e) {
+            console.warn('Could not save to localStorage');
+        }
+    },
+    
+    // Add channel to favorites
+    addFavorite: function(channelId) {
+        const favorites = this.getFavorites();
+        if (!favorites.includes(channelId)) {
+            favorites.push(channelId);
+            this.saveFavorites(favorites);
+        }
+        return favorites;
+    },
+    
+    // Remove channel from favorites
+    removeFavorite: function(channelId) {
+        let favorites = this.getFavorites();
+        favorites = favorites.filter(id => id !== channelId);
+        this.saveFavorites(favorites);
+        return favorites;
+    },
+    
+    // Check if channel is favorite
+    isFavorite: function(channelId) {
+        return this.getFavorites().includes(channelId);
+    },
+    
+    // Get recently watched
+    getRecentlyWatched: function() {
+        try {
+            return JSON.parse(localStorage.getItem('tanow_recent')) || [];
+        } catch (e) {
+            return [];
+        }
+    },
+    
+    // Add to recently watched
+    addRecentlyWatched: function(channelId) {
+        let recent = this.getRecentlyWatched();
+        recent = recent.filter(id => id !== channelId);
+        recent.unshift(channelId);
+        recent = recent.slice(0, 20); // Keep only last 20
+        try {
+            localStorage.setItem('tanow_recent', JSON.stringify(recent));
+        } catch (e) {
+            console.warn('Could not save to localStorage');
+        }
+    }
+};
+
+// ============================================
+// DOM READY - Initialize App
+// ============================================
+
 $(document).ready(function() {
     initApp();
 });
@@ -84,10 +156,10 @@ async function initApp() {
     // Setup event listeners
     setupEventListeners();
     
-    // Load data
+    // Load data from iptv-org API using jQuery
     await loadAllData();
     
-    // Render homepage content
+    // Render homepage content if on homepage
     if ($('[data-testid="hero-section"]').length) {
         renderStats();
         renderCategories();
@@ -120,15 +192,19 @@ function setupEventListeners() {
         $('[data-testid="search-results"]').empty();
     });
     
-    // Search input
-    $('[data-testid="search-input"]').on('input', debounce(function() {
+    // Search input with debounce
+    let searchTimeout;
+    $('[data-testid="search-input"]').on('input', function() {
+        clearTimeout(searchTimeout);
         const query = $(this).val().toLowerCase().trim();
-        if (query.length >= 2) {
-            performSearch(query);
-        } else {
-            $('[data-testid="search-results"]').empty();
-        }
-    }, 300));
+        searchTimeout = setTimeout(function() {
+            if (query.length >= 2) {
+                performSearch(query);
+            } else {
+                $('[data-testid="search-results"]').empty();
+            }
+        }, 300);
+    });
     
     // Close search on escape
     $(document).on('keydown', function(e) {
@@ -146,50 +222,29 @@ function setupEventListeners() {
 }
 
 /**
- * Load All Data from API
+ * Load All Data from iptv-org API using jQuery AJAX
  */
 async function loadAllData() {
     try {
-        const [channels, streams, categories, countries, languages] = await Promise.all([
-            fetchData(API.channels),
-            fetchData(API.streams),
-            fetchData(API.categories),
-            fetchData(API.countries),
-            fetchData(API.languages)
+        // Use jQuery.when for parallel requests
+        const results = await Promise.all([
+            $.getJSON(API.channels),
+            $.getJSON(API.streams),
+            $.getJSON(API.categories),
+            $.getJSON(API.countries),
+            $.getJSON(API.languages)
         ]);
         
-        appData.channels = channels || [];
-        appData.streams = streams || [];
-        appData.categories = categories || [];
-        appData.countries = countries || [];
-        appData.languages = languages || [];
+        appData.channels = results[0] || [];
+        appData.streams = results[1] || [];
+        appData.categories = results[2] || [];
+        appData.countries = results[3] || [];
+        appData.languages = results[4] || [];
         appData.isLoading = false;
         
-        // Store in localStorage for other pages
-        try {
-            localStorage.setItem('tanow_categories', JSON.stringify(appData.categories));
-            localStorage.setItem('tanow_countries', JSON.stringify(appData.countries));
-        } catch(e) {
-            console.warn('LocalStorage not available');
-        }
-        
     } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Error loading data from iptv-org API:', error);
         appData.isLoading = false;
-    }
-}
-
-/**
- * Fetch Data Helper
- */
-async function fetchData(url) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        console.error(`Error fetching ${url}:`, error);
-        return [];
     }
 }
 
@@ -197,19 +252,11 @@ async function fetchData(url) {
  * Render Stats
  */
 function renderStats() {
-    // Count channels
     const totalChannels = appData.channels.filter(c => !c.is_nsfw && !c.closed).length;
-    
-    // Count unique countries
     const uniqueCountries = new Set(appData.channels.map(c => c.country)).size;
-    
-    // Count categories
     const totalCategories = appData.categories.length;
-    
-    // Count languages
     const totalLanguages = appData.languages.length;
     
-    // Animate counters
     animateCounter('#total-channels', totalChannels);
     animateCounter('#total-countries', uniqueCountries);
     animateCounter('#total-categories', totalCategories);
@@ -227,7 +274,7 @@ function animateCounter(selector, target) {
     const stepTime = duration / steps;
     let current = 0;
     
-    const timer = setInterval(() => {
+    const timer = setInterval(function() {
         current += stepValue;
         if (current >= target) {
             element.text(formatNumber(target));
@@ -255,28 +302,26 @@ function renderCategories() {
     const container = $('[data-testid="categories-grid"]');
     container.empty();
     
-    // Filter and sort categories (exclude NSFW, show top 8)
     const displayCategories = appData.categories
         .filter(cat => cat.id !== 'xxx')
         .slice(0, 8);
     
-    // Count channels per category
     const categoryCounts = {};
-    appData.channels.forEach(channel => {
+    appData.channels.forEach(function(channel) {
         if (channel.categories && !channel.is_nsfw && !channel.closed) {
-            channel.categories.forEach(cat => {
+            channel.categories.forEach(function(cat) {
                 categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
             });
         }
     });
     
-    displayCategories.forEach((category, index) => {
+    displayCategories.forEach(function(category) {
         const count = categoryCounts[category.id] || 0;
         const icon = CATEGORY_ICONS[category.id] || 'ph-duotone ph-television';
         const image = CATEGORY_IMAGES[category.id] || CATEGORY_IMAGES['general'];
         
         const card = `
-            <a href="pages/channels.html?category=${category.id}" class="category-card" data-testid="category-${category.id}">
+            <a href="/pages/channels.html?category=${category.id}" class="category-card" data-testid="category-${category.id}">
                 <div class="category-card__bg">
                     <img src="${image}" alt="${category.name}" loading="lazy">
                 </div>
@@ -301,27 +346,27 @@ function renderCountries() {
     const container = $('[data-testid="countries-grid"]');
     container.empty();
     
-    // Count channels per country
     const countryCounts = {};
-    appData.channels.forEach(channel => {
+    appData.channels.forEach(function(channel) {
         if (channel.country && !channel.is_nsfw && !channel.closed) {
             countryCounts[channel.country] = (countryCounts[channel.country] || 0) + 1;
         }
     });
     
-    // Sort countries by channel count and take top 12
     const sortedCountries = appData.countries
-        .map(country => ({
-            ...country,
-            channelCount: countryCounts[country.code] || 0
-        }))
-        .filter(c => c.channelCount > 0)
-        .sort((a, b) => b.channelCount - a.channelCount)
+        .map(function(country) {
+            return {
+                ...country,
+                channelCount: countryCounts[country.code] || 0
+            };
+        })
+        .filter(function(c) { return c.channelCount > 0; })
+        .sort(function(a, b) { return b.channelCount - a.channelCount; })
         .slice(0, 12);
     
-    sortedCountries.forEach(country => {
+    sortedCountries.forEach(function(country) {
         const card = `
-            <a href="pages/channels.html?country=${country.code}" class="country-card" data-testid="country-${country.code}">
+            <a href="/pages/channels.html?country=${country.code}" class="country-card" data-testid="country-${country.code}">
                 <span class="country-card__flag">${country.flag}</span>
                 <div class="country-card__info">
                     <span class="country-card__name">${country.name}</span>
@@ -340,44 +385,42 @@ function renderLatestChannels() {
     const container = $('[data-testid="latest-channels-grid"]');
     container.empty();
     
-    // Create a map of streams for quick lookup
     const streamMap = {};
-    appData.streams.forEach(stream => {
+    appData.streams.forEach(function(stream) {
         if (stream.channel && !streamMap[stream.channel]) {
             streamMap[stream.channel] = stream;
         }
     });
     
-    // Filter channels that have streams and aren't NSFW
     const channelsWithStreams = appData.channels
-        .filter(channel => 
-            !channel.is_nsfw && 
-            !channel.closed && 
-            streamMap[channel.id]
-        )
+        .filter(function(channel) {
+            return !channel.is_nsfw && !channel.closed && streamMap[channel.id];
+        })
         .slice(0, 10);
     
-    channelsWithStreams.forEach(channel => {
+    channelsWithStreams.forEach(function(channel) {
         const stream = streamMap[channel.id];
         const category = channel.categories && channel.categories[0] ? channel.categories[0] : 'general';
-        const country = appData.countries.find(c => c.code === channel.country);
+        const country = appData.countries.find(function(c) { return c.code === channel.country; });
+        const isFav = Storage.isFavorite(channel.id);
         
         const card = `
             <div class="channel-card" data-testid="channel-${channel.id}" 
                  data-stream-url="${stream.url}"
+                 data-channel-id="${channel.id}"
                  data-channel-name="${escapeHtml(channel.name)}"
                  data-channel-country="${country ? country.name : ''}"
                  data-channel-category="${category}"
                  onclick="playChannel(this)">
                 <div class="channel-card__thumbnail">
-                    <img src="https://via.placeholder.com/320x180/141414/525252?text=${encodeURIComponent(channel.name.substring(0, 10))}" 
-                         alt="${escapeHtml(channel.name)}" 
-                         class="channel-card__logo"
-                         loading="lazy">
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-card) 100%);">
+                        <span style="font-size: 1.25rem; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0.5rem;">${escapeHtml(channel.name.substring(0, 12))}</span>
+                    </div>
                     <div class="channel-card__play">
                         <i class="ph-fill ph-play-circle"></i>
                     </div>
                     <span class="channel-card__live">Live</span>
+                    ${isFav ? '<span class="channel-card__fav"><i class="ph-fill ph-heart"></i></span>' : ''}
                 </div>
                 <div class="channel-card__info">
                     <h4 class="channel-card__name">${escapeHtml(channel.name)}</h4>
@@ -399,14 +442,14 @@ function performSearch(query) {
     const resultsContainer = $('[data-testid="search-results"]');
     resultsContainer.empty();
     
-    // Search channels
     const results = appData.channels
-        .filter(channel => 
-            !channel.is_nsfw && 
-            !channel.closed &&
-            (channel.name.toLowerCase().includes(query) ||
-             (channel.alt_names && channel.alt_names.some(n => n.toLowerCase().includes(query))))
-        )
+        .filter(function(channel) {
+            return !channel.is_nsfw && !channel.closed &&
+                (channel.name.toLowerCase().includes(query) ||
+                 (channel.alt_names && channel.alt_names.some(function(n) { 
+                     return n.toLowerCase().includes(query); 
+                 })));
+        })
         .slice(0, 10);
     
     if (results.length === 0) {
@@ -418,29 +461,28 @@ function performSearch(query) {
         return;
     }
     
-    // Create stream map
     const streamMap = {};
-    appData.streams.forEach(stream => {
+    appData.streams.forEach(function(stream) {
         if (stream.channel && !streamMap[stream.channel]) {
             streamMap[stream.channel] = stream;
         }
     });
     
-    results.forEach(channel => {
-        const country = appData.countries.find(c => c.code === channel.country);
+    results.forEach(function(channel) {
+        const country = appData.countries.find(function(c) { return c.code === channel.country; });
         const stream = streamMap[channel.id];
         const hasStream = !!stream;
         
         const result = `
             <div class="search-result" 
-                 ${hasStream ? `onclick="playChannelFromSearch('${stream.url}', '${escapeHtml(channel.name)}', '${country ? country.name : ''}')"` : ''}
+                 ${hasStream ? `onclick="playChannelFromSearch('${stream.url}', '${escapeHtml(channel.name)}', '${country ? country.name : ''}', '${channel.id}')"` : ''}
                  style="${!hasStream ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
-                <img src="https://via.placeholder.com/48x48/141414/525252?text=${encodeURIComponent(channel.name.substring(0, 2))}" 
-                     alt="${escapeHtml(channel.name)}" 
-                     class="search-result__logo">
+                <div style="width: 48px; height: 48px; background: var(--bg-card); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center;">
+                    <i class="ph-duotone ph-television" style="color: var(--accent-primary);"></i>
+                </div>
                 <div class="search-result__info">
                     <h4>${escapeHtml(channel.name)}</h4>
-                    <span>${country ? country.flag + ' ' + country.name : ''} ${hasStream ? '' : '• No stream available'}</span>
+                    <span>${country ? country.flag + ' ' + country.name : ''} ${hasStream ? '' : '• No stream'}</span>
                 </div>
             </div>
         `;
@@ -452,32 +494,43 @@ function performSearch(query) {
  * Play Channel
  */
 function playChannel(element) {
-    const streamUrl = $(element).data('stream-url');
-    const channelName = $(element).data('channel-name');
-    const channelCountry = $(element).data('channel-country');
-    const channelCategory = $(element).data('channel-category');
+    const $el = $(element);
+    const streamUrl = $el.data('stream-url');
+    const channelId = $el.data('channel-id');
+    const channelName = $el.data('channel-name');
+    const channelCountry = $el.data('channel-country');
+    const channelCategory = $el.data('channel-category');
     
-    openPlayer(streamUrl, channelName, `${channelCountry} • ${capitalizeFirst(channelCategory)}`);
+    // Add to recently watched (localStorage)
+    Storage.addRecentlyWatched(channelId);
+    
+    openPlayer(streamUrl, channelName, `${channelCountry} • ${capitalizeFirst(channelCategory)}`, channelId);
 }
 
 /**
  * Play Channel from Search
  */
-function playChannelFromSearch(streamUrl, channelName, channelCountry) {
-    openPlayer(streamUrl, channelName, channelCountry);
+function playChannelFromSearch(streamUrl, channelName, channelCountry, channelId) {
+    Storage.addRecentlyWatched(channelId);
+    openPlayer(streamUrl, channelName, channelCountry, channelId);
     $('[data-testid="search-overlay"]').removeClass('search-overlay--active');
 }
 
 /**
  * Open Player Modal
  */
-function openPlayer(streamUrl, channelName, channelMeta) {
+function openPlayer(streamUrl, channelName, channelMeta, channelId) {
     const modal = $('[data-testid="player-modal"]');
     const video = document.getElementById('video-player');
     
     // Update channel info
     $('[data-testid="player-channel-name"]').text(channelName);
     $('[data-testid="player-channel-meta"]').text(channelMeta);
+    
+    // Update favorite button
+    const isFav = Storage.isFavorite(channelId);
+    $('.player-modal__fav-btn').attr('data-channel-id', channelId);
+    $('.player-modal__fav-btn i').attr('class', isFav ? 'ph-fill ph-heart' : 'ph ph-heart');
     
     // Show loading
     $('[data-testid="player-loading"]').addClass('player-modal__loading--active');
@@ -494,7 +547,6 @@ function openPlayer(streamUrl, channelName, channelMeta) {
  * Initialize HLS Player
  */
 function initHLSPlayer(videoElement, streamUrl) {
-    // Stop any existing player
     stopPlayer();
     
     if (Hls.isSupported()) {
@@ -509,7 +561,7 @@ function initHLSPlayer(videoElement, streamUrl) {
         
         hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function() {
             $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-            videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+            videoElement.play().catch(function(e) { console.log('Autoplay blocked:', e); });
         });
         
         hlsPlayer.on(Hls.Events.ERROR, function(event, data) {
@@ -523,12 +575,12 @@ function initHLSPlayer(videoElement, streamUrl) {
     } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
         // Native HLS support (Safari)
         videoElement.src = streamUrl;
-        videoElement.addEventListener('loadedmetadata', function() {
+        $(videoElement).on('loadedmetadata', function() {
             $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-            videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+            videoElement.play().catch(function(e) { console.log('Autoplay blocked:', e); });
         });
         
-        videoElement.addEventListener('error', function() {
+        $(videoElement).on('error', function() {
             $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
             $('[data-testid="player-error"]').addClass('player-modal__error--active');
         });
@@ -565,6 +617,19 @@ function closePlayer() {
 }
 
 /**
+ * Toggle Favorite
+ */
+function toggleFavorite(channelId) {
+    if (Storage.isFavorite(channelId)) {
+        Storage.removeFavorite(channelId);
+        $('.player-modal__fav-btn i').attr('class', 'ph ph-heart');
+    } else {
+        Storage.addFavorite(channelId);
+        $('.player-modal__fav-btn i').attr('class', 'ph-fill ph-heart');
+    }
+}
+
+/**
  * Helper: Escape HTML
  */
 function escapeHtml(text) {
@@ -580,22 +645,9 @@ function capitalizeFirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-/**
- * Helper: Debounce
- */
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func.apply(this, args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
 // Make functions globally accessible
 window.playChannel = playChannel;
 window.playChannelFromSearch = playChannelFromSearch;
 window.closePlayer = closePlayer;
+window.toggleFavorite = toggleFavorite;
+window.Storage = Storage;
