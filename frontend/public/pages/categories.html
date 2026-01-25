@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse IPTV channels by category - News, Sports, Entertainment, Movies, Music and more on TaNow Online.">
+    <title>Browse by Category - TaNow Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" data-testid="main-header">
+        <div class="header__container">
+            <a href="../index.html" class="header__logo" data-testid="logo-link">
+                <i class="ph-duotone ph-television"></i>
+                <span>TaNow <span class="header__logo-accent">Online</span></span>
+            </a>
+            <nav class="header__nav" data-testid="main-nav">
+                <a href="../index.html" class="header__nav-link">Home</a>
+                <a href="countries.html" class="header__nav-link">Countries</a>
+                <a href="categories.html" class="header__nav-link header__nav-link--active">Categories</a>
+                <a href="channels.html" class="header__nav-link">All Channels</a>
+                <a href="about.html" class="header__nav-link">About</a>
+            </nav>
+            <div class="header__actions">
+                <button class="header__menu-btn" data-testid="mobile-menu-toggle" aria-label="Toggle menu">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="mobile-nav" data-testid="mobile-nav">
+            <a href="../index.html" class="mobile-nav__link">Home</a>
+            <a href="countries.html" class="mobile-nav__link">Countries</a>
+            <a href="categories.html" class="mobile-nav__link mobile-nav__link--active">Categories</a>
+            <a href="channels.html" class="mobile-nav__link">All Channels</a>
+            <a href="about.html" class="mobile-nav__link">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-header" data-testid="categories-header">
+            <h1 class="page-header__title">BROWSE BY CATEGORY</h1>
+            <p class="page-header__description">Find channels that match your interests – from News to Sports to Entertainment</p>
+        </div>
+
+        <!-- Ad Slot -->
+        <div class="ad-container">
+            <div class="ad-slot ad-slot--leaderboard">
+                <span class="ad-slot__label">Advertisement</span>
+            </div>
+        </div>
+
+        <section class="page-content" data-testid="categories-content">
+            <div class="container">
+                <div class="categories__bento" id="categories-grid" data-testid="categories-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+                    <div class="loading">
+                        <div class="loading__spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ad Slot -->
+        <div class="ad-container">
+            <div class="ad-slot ad-slot--rectangle">
+                <span class="ad-slot__label">Advertisement</span>
+            </div>
+        </div>
+
+        <!-- SEO Content -->
+        <section class="content-section">
+            <div class="container">
+                <article class="content-article">
+                    <h2>Discover Content by Genre</h2>
+                    <p>TaNow Online organizes thousands of IPTV channels into intuitive categories, making it easy to find exactly the type of content you're looking for. Whether you want to catch up on breaking news, watch live sports, enjoy movies, or discover new music, our category-based navigation helps you find the perfect channel.</p>
+                    
+                    <h3>Popular Categories</h3>
+                    <ul>
+                        <li><strong>News:</strong> Stay informed with 24/7 news channels from around the world, covering local, national, and international events.</li>
+                        <li><strong>Sports:</strong> Live sports action including football, basketball, cricket, tennis, and more from major leagues worldwide.</li>
+                        <li><strong>Entertainment:</strong> General entertainment channels featuring shows, series, and variety programming.</li>
+                        <li><strong>Movies:</strong> Dedicated movie channels broadcasting films across all genres.</li>
+                        <li><strong>Music:</strong> Music video channels, live concerts, and audio-visual entertainment.</li>
+                        <li><strong>Kids:</strong> Family-friendly content and educational programming for children.</li>
+                        <li><strong>Documentary:</strong> Factual programming covering science, nature, history, and current affairs.</li>
+                    </ul>
+                    
+                    <p>Click on any category below to explore all available channels in that genre. Each category page displays channels from multiple countries, giving you a truly global perspective on each content type.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" data-testid="main-footer">
+        <div class="footer__container">
+            <div class="footer__main">
+                <div class="footer__brand">
+                    <a href="../index.html" class="footer__logo">
+                        <i class="ph-duotone ph-television"></i>
+                        <span>TaNow <span class="footer__logo-accent">Online</span></span>
+                    </a>
+                    <p class="footer__tagline">Stream the World, One Channel at a Time</p>
+                </div>
+                <div class="footer__links">
+                    <div class="footer__column">
+                        <h4>Browse</h4>
+                        <ul>
+                            <li><a href="countries.html">By Country</a></li>
+                            <li><a href="categories.html">By Category</a></li>
+                            <li><a href="channels.html">All Channels</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__column">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="privacy.html">Privacy Policy</a></li>
+                            <li><a href="terms.html">Terms of Service</a></li>
+                            <li><a href="disclaimer.html">Disclaimer</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2025 TaNow Online. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        const API_BASE = 'https://iptv-org.github.io/api';
+        
+        const CATEGORY_ICONS = {
+            'animation': 'ph-duotone ph-magic-wand',
+            'auto': 'ph-duotone ph-car',
+            'business': 'ph-duotone ph-briefcase',
+            'classic': 'ph-duotone ph-film-reel',
+            'comedy': 'ph-duotone ph-smiley',
+            'cooking': 'ph-duotone ph-cooking-pot',
+            'culture': 'ph-duotone ph-bank',
+            'documentary': 'ph-duotone ph-video-camera',
+            'education': 'ph-duotone ph-graduation-cap',
+            'entertainment': 'ph-duotone ph-star',
+            'family': 'ph-duotone ph-users-three',
+            'general': 'ph-duotone ph-television',
+            'kids': 'ph-duotone ph-baby',
+            'legislative': 'ph-duotone ph-scales',
+            'lifestyle': 'ph-duotone ph-heart',
+            'movies': 'ph-duotone ph-film-slate',
+            'music': 'ph-duotone ph-music-notes',
+            'news': 'ph-duotone ph-newspaper',
+            'outdoor': 'ph-duotone ph-mountains',
+            'relax': 'ph-duotone ph-leaf',
+            'religious': 'ph-duotone ph-cross',
+            'science': 'ph-duotone ph-atom',
+            'series': 'ph-duotone ph-monitor-play',
+            'shop': 'ph-duotone ph-shopping-cart',
+            'sports': 'ph-duotone ph-soccer-ball',
+            'travel': 'ph-duotone ph-airplane',
+            'weather': 'ph-duotone ph-cloud-sun',
+            'xxx': 'ph-duotone ph-warning'
+        };
+
+        const CATEGORY_IMAGES = {
+            'news': 'https://images.unsplash.com/photo-1586448911122-f74aa8e3e4b6?w=600',
+            'sports': 'https://images.pexels.com/photos/200986/pexels-photo-200986.jpeg?w=600',
+            'entertainment': 'https://images.pexels.com/photos/1983046/pexels-photo-1983046.jpeg?w=600',
+            'movies': 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?w=600',
+            'music': 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?w=600',
+            'kids': 'https://images.pexels.com/photos/1148998/pexels-photo-1148998.jpeg?w=600',
+            'documentary': 'https://images.pexels.com/photos/3617500/pexels-photo-3617500.jpeg?w=600',
+            'general': 'https://images.pexels.com/photos/5202925/pexels-photo-5202925.jpeg?w=600',
+            'education': 'https://images.pexels.com/photos/256395/pexels-photo-256395.jpeg?w=600',
+            'religious': 'https://images.pexels.com/photos/208371/pexels-photo-208371.jpeg?w=600',
+            'cooking': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=600',
+            'travel': 'https://images.pexels.com/photos/386009/pexels-photo-386009.jpeg?w=600',
+            'science': 'https://images.pexels.com/photos/2156/sky-earth-space-working.jpg?w=600',
+            'lifestyle': 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?w=600',
+            'business': 'https://images.pexels.com/photos/159888/pexels-photo-159888.jpeg?w=600'
+        };
+
+        $(document).ready(function() {
+            initPage();
+        });
+
+        async function initPage() {
+            $('[data-testid="mobile-menu-toggle"]').on('click', function() {
+                $('[data-testid="mobile-nav"]').toggleClass('mobile-nav--active');
+                $(this).find('i').toggleClass('ph-list ph-x');
+            });
+
+            try {
+                const [categories, channels] = await Promise.all([
+                    fetch(`${API_BASE}/categories.json`).then(r => r.json()),
+                    fetch(`${API_BASE}/channels.json`).then(r => r.json())
+                ]);
+
+                // Count channels per category
+                const categoryCounts = {};
+                channels.forEach(channel => {
+                    if (channel.categories && !channel.is_nsfw && !channel.closed) {
+                        channel.categories.forEach(cat => {
+                            categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+                        });
+                    }
+                });
+
+                // Sort categories by channel count (excluding xxx)
+                const sortedCategories = categories
+                    .filter(cat => cat.id !== 'xxx')
+                    .map(cat => ({
+                        ...cat,
+                        count: categoryCounts[cat.id] || 0
+                    }))
+                    .filter(cat => cat.count > 0)
+                    .sort((a, b) => b.count - a.count);
+
+                renderCategories(sortedCategories);
+            } catch (error) {
+                console.error('Error:', error);
+                $('#categories-grid').html('<div class="empty-state"><i class="ph-duotone ph-warning-circle"></i><h3>Failed to load categories</h3></div>');
+            }
+        }
+
+        function renderCategories(categories) {
+            const container = $('#categories-grid');
+            container.empty();
+
+            categories.forEach(category => {
+                const icon = CATEGORY_ICONS[category.id] || 'ph-duotone ph-television';
+                const image = CATEGORY_IMAGES[category.id] || CATEGORY_IMAGES['general'];
+                
+                const card = `
+                    <a href="channels.html?category=${category.id}" class="category-card" data-testid="category-${category.id}">
+                        <div class="category-card__bg">
+                            <img src="${image}" alt="${category.name}" loading="lazy">
+                        </div>
+                        <div class="category-card__overlay"></div>
+                        <div class="category-card__content">
+                            <div class="category-card__icon">
+                                <i class="${icon}"></i>
+                            </div>
+                            <h3 class="category-card__name">${category.name}</h3>
+                            <span class="category-card__count">${category.count} channels</span>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">${category.description || ''}</p>
+                        </div>
+                    </a>
+                `;
+                container.append(card);
+            });
+        }
+    </script>
+</body>
+</html>
