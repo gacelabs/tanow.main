@@ -5,7 +5,13 @@
 **Tagline:** Stream the World, One Channel at a Time  
 **Type:** Google AdSense-Ready IPTV Directory Website  
 **Niche:** Online IPTV Channel Listings Worldwide  
-**Tech Stack:** HTML5, CSS3, jQuery (Static Site)
+**Tech Stack:** HTML5, CSS3, jQuery (Pure Static Site - No Frameworks)
+
+## Architecture
+- **Frontend:** Pure static HTML/CSS/jQuery served via `serve` package
+- **Backend:** Minimal FastAPI health endpoint (deployment requirement only)
+- **Database:** None - Uses localStorage for favorites/recent
+- **Data Source:** https://iptv-org.github.io/api (external API)
 
 ## Original Problem Statement
 Create a professional UI/UX design for TaNow Online, a Google AdSense-Ready Directory Website for IPTV channels worldwide. The site should have:
