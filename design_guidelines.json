@@ -1,0 +1,157 @@
+{
+  "identity": {
+    "name": "E1",
+    "role": "The Anti-AI Designer",
+    "mission": "Create a top 1% 'Cinematic Magazine' interface for TaNow Online that merges the immersion of Netflix with the density of a Bloomberg terminal. Break the 'pirate site' stigma with premium, trustworthy aesthetics.",
+    "principles": [
+      "Fusion: Netflix Immersion + Editorial Density. Don't just list channels; showcase them.",
+      "Dark Mode First: Not just inverted colors. Use 'Obsidian' and 'Glass' layers to create depth.",
+      "AdSense Harmony: Ads are content. Frame them like premium sponsors, don't hide them.",
+      "Semantic Power: HTML5 is the engine. Use <article>, <section>, <aside> for SEO dominance."
+    ]
+  },
+  "design_system": {
+    "theme": "Cinematic Dark (OLED Optimized)",
+    "colors": {
+      "backgrounds": {
+        "page_bg": "#050505",
+        "card_bg": "#141414",
+        "card_hover": "#1F1F1F",
+        "sidebar_bg": "#0A0A0A",
+        "header_glass": "rgba(10, 10, 10, 0.85)"
+      },
+      "text": {
+        "primary": "#EDEDED",
+        "secondary": "#A1A1A1",
+        "muted": "#525252",
+        "accent": "#FFFFFF"
+      },
+      "accents": {
+        "primary_brand": "#00E5FF",
+        "secondary_brand": "#7C4DFF",
+        "live_indicator": "#FF3B30",
+        "success": "#34C759",
+        "warning": "#FFD60A"
+      },
+      "borders": {
+        "subtle": "rgba(255, 255, 255, 0.1)",
+        "active": "rgba(0, 229, 255, 0.5)"
+      }
+    },
+    "typography": {
+      "headings": {
+        "font_family": "'Oswald', sans-serif",
+        "weights": [500, 700],
+        "usage": "Section titles, Channel names, Hero text. Uppercase for H1/H2.",
+        "letter_spacing": "0.05em"
+      },
+      "body": {
+        "font_family": "'Inter', sans-serif",
+        "weights": [400, 500],
+        "usage": "Descriptions, Metadata, UI elements.",
+        "line_height": "1.6"
+      },
+      "mono": {
+        "font_family": "'JetBrains Mono', monospace",
+        "usage": "Stream URLs, Technical metadata."
+      }
+    },
+    "spacing": {
+      "container_padding": "clamp(1rem, 5vw, 4rem)",
+      "grid_gap": "1.5rem",
+      "section_spacing": "4rem"
+    },
+    "layout": {
+      "grid_system": "CSS Grid",
+      "max_width": "1440px",
+      "breakpoints": {
+        "mobile": "768px",
+        "tablet": "1024px",
+        "desktop": "1280px"
+      }
+    }
+  },
+  "components": {
+    "header": {
+      "style": "Sticky, Glassmorphism",
+      "elements": ["Logo (Left)", "Nav Links (Center)", "Search + Mobile Menu (Right)"],
+      "height": "80px",
+      "z_index": 1000
+    },
+    "hero_section": {
+      "style": "Immersive, Full-width background image with gradient overlay",
+      "content": ["H1 Headline", "Subtext", "Primary CTA (Browse Channels)", "Secondary CTA (About)"],
+      "overlay": "linear-gradient(to top, #050505 10%, transparent 100%)"
+    },
+    "channel_card": {
+      "style": "Bento-style, Aspect Ratio 16:9 or 1:1",
+      "elements": ["Channel Logo (Centered)", "Live Badge (Top Right)", "Channel Name (Bottom Left)", "Category Tag"],
+      "hover_effect": "Scale 1.02 + Border Glow + Play Icon Reveal"
+    },
+    "ad_units": {
+      "leaderboard": {
+        "size": "728x90 (Desktop) / 320x50 (Mobile)",
+        "placement": "Top of Homepage, Above Footer",
+        "style": "Centered, labeled 'Advertisement' in small muted text"
+      },
+      "sidebar_sticky": {
+        "size": "300x600",
+        "placement": "Sidebar on Channel List pages",
+        "behavior": "Sticky on scroll"
+      },
+      "in_feed": {
+        "style": "Native Card Look",
+        "placement": "Every 8th card in the grid"
+      }
+    },
+    "player_interface": {
+      "style": "Cinema Mode",
+      "elements": ["Video Container (16:9)", "Channel Info (Below)", "Related Channels (Sidebar/Bottom)"],
+      "tech": "HLS.js wrapper with custom CSS controls"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bg": "https://images.pexels.com/photos/5202925/pexels-photo-5202925.jpeg",
+      "global_network": "https://images.pexels.com/photos/479356/pexels-photo-479356.jpeg",
+      "sports_category": "https://images.pexels.com/photos/200986/pexels-photo-200986.jpeg",
+      "news_category": "https://images.unsplash.com/photo-1586448911122-f74aa8e3e4b6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzN8MHwxfHNlYXJjaHw0fHxnbG9iYWwlMjBkaWdpdGFsJTIwbmV0d29yayUyMGNvbm5lY3Rpb24lMjBtYXAlMjBkYXJrfGVufDB8fHx8MTc2OTM0NjAzMnww&ixlib=rb-4.1.0&q=85",
+      "entertainment_category": "https://images.unsplash.com/photo-1767559811416-86d963b4704f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njl8MHwxfHNlYXJjaHwxfHxjaW5lbWF0aWMlMjB0diUyMHN0cmVhbWluZyUyMGxpdmluZyUyMHJvb20lMjBkYXJrfGVufDB8fHx8MTc2OTM0NjAzMHww&ixlib=rb-4.1.0&q=85"
+    },
+    "icons": {
+      "library": "Phosphor Icons (via CDN)",
+      "style": "Regular or Duotone"
+    }
+  },
+  "technical_guidelines": {
+    "stack": "HTML5, CSS3, jQuery",
+    "css_methodology": "BEM (Block Element Modifier) or Utility-First (if using Tailwind CDN)",
+    "responsive_strategy": "Mobile-First Media Queries",
+    "accessibility": {
+      "contrast": "WCAG AA Compliant",
+      "focus_states": "Visible outline on all interactive elements",
+      "aria_labels": "Required for all icon-only buttons"
+    },
+    "performance": {
+      "images": "Lazy load all images below the fold",
+      "scripts": "Defer non-critical JS"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. SCAFFOLD: Create the directory structure: /index.html, /css/style.css, /js/app.js, /pages/...",
+    "2. STYLES: Set up the CSS variables in :root based on the 'Cinematic Dark' palette.",
+    "3. LAYOUT: Build the 'Bento' grid for the homepage categories using CSS Grid.",
+    "4. PLAYER: Implement HLS.js in /js/player.js and create a robust video player container.",
+    "5. DATA: Write a jQuery function to fetch channel data from 'https://iptv-org.github.io/api/channels.json' (or specific country endpoints) and render cards dynamically.",
+    "6. ADS: Insert placeholder divs for AdSense with the class 'ad-slot' and correct dimensions.",
+    "7. LEGAL: Create simple text-based pages for Privacy, Terms, and Disclaimer to satisfy AdSense.",
+    "8. TEST: Ensure all interactive elements have data-testid attributes."
+  ],
+  "universal_guidelines": [
+    "Do not use gradients for text.",
+    "Ensure 4.5:1 contrast ratio for text.",
+    "Use 'Oswald' for headings and 'Inter' for body.",
+    "All interactive elements must have a hover state.",
+    "Use data-testid for testing."
+  ]
+}
