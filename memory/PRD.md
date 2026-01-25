@@ -94,24 +94,34 @@ Create a professional UI/UX design for TaNow Online, a Google AdSense-Ready Dire
 - [ ] Dark/Light theme toggle
 - [ ] Multi-language UI support
 
-## File Structure
+## File Structure (Deployment Ready)
 ```
 /app/
-├── index.html           # Homepage
-├── css/
-│   └── style.css        # Main styles
-├── js/
-│   └── app.js           # Main JavaScript
-└── pages/
-    ├── channels.html    # All channels with player
-    ├── countries.html   # Browse by country
-    ├── categories.html  # Browse by category
-    ├── privacy.html     # Privacy Policy
-    ├── terms.html       # Terms of Service
-    ├── disclaimer.html  # Disclaimer
-    ├── about.html       # About Us
-    ├── faq.html         # FAQ
-    └── contact.html     # Contact Form
+├── backend/
+│   ├── server.py        # FastAPI health check API
+│   ├── requirements.txt # Python dependencies
+│   └── .env             # Backend environment
+├── frontend/
+│   ├── package.json     # Node dependencies (serve)
+│   ├── .env             # Frontend environment
+│   └── public/          # Static files served
+│       ├── index.html   # Homepage
+│       ├── css/
+│       │   └── style.css
+│       ├── js/
+│       │   └── app.js
+│       └── pages/
+│           ├── channels.html
+│           ├── countries.html
+│           ├── categories.html
+│           ├── privacy.html
+│           ├── terms.html
+│           ├── disclaimer.html
+│           ├── about.html
+│           ├── faq.html
+│           └── contact.html
+└── memory/
+    └── PRD.md
 ```
 
 ## Testing Results
