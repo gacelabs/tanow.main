@@ -92,6 +92,15 @@ let appData = {
 	isLoading: true
 };
 
+let storageData = {
+	tanow_channels: [],
+	tanow_streams: [],
+	tanow_categories: [],
+	tanow_countries: [],
+	tanow_languages: [],
+	tanow_logos: [],
+}
+
 // HLS Player Instance
 let hlsPlayer = null;
 
@@ -173,30 +182,56 @@ function setupEventListeners() {
  */
 async function loadAllData() {
 	try {
-		const [channels, streams, categories, countries, languages, logos] = await Promise.all([
-			fetchData(API.channels),
-			fetchData(API.streams),
-			fetchData(API.categories),
-			fetchData(API.countries),
-			fetchData(API.languages),
-			fetchData(API.logos)
-		]);
+		/* Object.keys(storageData).forEach(key => {
+			const item = localStorage.getItem(key);
+			if (item) {
+				storageData[key] = JSON.parse(item);
+			} else {
+				storageData[key] = $.ajax({
+					url: API[key.replace('tanow_', '')],
+					dataType: 'json',
+					async: false
+				}).responseJSON;
+				// localStorage.setItem(key, JSON.stringify(storageData[key]));
+			}
+		});
 
-		appData.channels = channels || [];
-		appData.streams = streams || [];
-		appData.categories = categories || [];
-		appData.countries = countries || [];
-		appData.languages = languages || [];
-		appData.logos = logos || [];
-		appData.isLoading = false;
+		if (storageData) {
+			console.log('Loaded from localStorage:', storageData);
+			Object.keys(storageData).forEach(key => {
+				appData[key.replace('tanow_', '')] = storageData[key];
+			});
+			appData.isLoading = false;
+		} else { */
+			const [channels, streams, categories, countries, languages, logos] = await Promise.all([
+				fetchData(API.channels),
+				fetchData(API.streams),
+				fetchData(API.categories),
+				fetchData(API.countries),
+				fetchData(API.languages),
+				fetchData(API.logos)
+			]);
 
-		// Store in localStorage for other pages
-		try {
-			localStorage.setItem('tanow_categories', JSON.stringify(appData.categories));
-			localStorage.setItem('tanow_countries', JSON.stringify(appData.countries));
-		} catch (e) {
-			console.warn('LocalStorage not available');
-		}
+			appData.channels = channels || [];
+			appData.streams = streams || [];
+			appData.categories = categories || [];
+			appData.countries = countries || [];
+			appData.languages = languages || [];
+			appData.logos = logos || [];
+			appData.isLoading = false;
+
+			/* // Store in localStorage for other pages
+			try {
+				localStorage.setItem('tanow_channels', JSON.stringify(appData.channels));
+				localStorage.setItem('tanow_streams', JSON.stringify(appData.streams));
+				localStorage.setItem('tanow_categories', JSON.stringify(appData.categories));
+				localStorage.setItem('tanow_countries', JSON.stringify(appData.countries));
+				localStorage.setItem('tanow_languages', JSON.stringify(appData.languages));
+				localStorage.setItem('tanow_logos', JSON.stringify(appData.logos));
+			} catch (e) {
+				console.warn('LocalStorage not available');
+			}
+		} */
 
 	} catch (error) {
 		console.error('Error loading data:', error);
@@ -375,12 +410,14 @@ function renderLatestChannels() {
 
 	// Filter channels that have streams and aren't NSFW
 	const channelsWithStreams = appData.channels
+		// .sort(() => Math.random() - 0.5)
 		.filter(channel =>
 			!channel.is_nsfw &&
 			!channel.closed &&
 			streamMap[channel.id]
 		)
-		.slice(0, 10);
+		.slice(0, 10)
+		/* .sort(() => Math.random() - 0.5) */;
 
 	channelsWithStreams.forEach(channel => {
 		const stream = streamMap[channel.id];
@@ -457,19 +494,26 @@ function performSearch(query) {
 		const stream = streamMap[channel.id];
 		const hasStream = !!stream;
 
-		const result = `
-            <div class="search-result" 
-                 ${hasStream ? `onclick="playChannelFromSearch('${channel.id}', '${stream.url}', '${escapeHtml(channel.name)}', '${country ? country.name : ''}')"` : ''}
-                 style="${!hasStream ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
-                <img src="https://placehold.co/48x48?text=${encodeURIComponent(channel.name.substring(0, 2))}" 
-                     alt="${escapeHtml(channel.name)}" 
-                     class="search-result__logo">
-                <div class="search-result__info">
-                    <h4>${escapeHtml(channel.name)}</h4>
-                    <span>${country ? country.flag + ' ' + country.name : ''} ${hasStream ? '' : '• No stream available'}</span>
-                </div>
-            </div>
-        `;
+		const result = document.createElement('div');
+		result.className = 'search-result';
+		result.style.opacity = hasStream ? '1' : '0.5';
+		result.style.cursor = hasStream ? 'pointer' : 'not-allowed';
+		
+		if (hasStream) {
+			result.addEventListener('click', () => {
+				playChannelFromSearch(channel.id, stream.url, channel.name, country ? country.name : '');
+			});
+		}
+		
+		result.innerHTML = `
+			<img src="https://placehold.co/48x48?text=${encodeURIComponent(channel.name.substring(0, 2))}" 
+				 alt="${escapeHtml(channel.name)}" 
+				 class="search-result__logo">
+			<div class="search-result__info">
+				<h4>${escapeHtml(channel.name)}</h4>
+				<span>${country ? country.flag + ' ' + country.name : ''} ${hasStream ? '' : '• No stream available'}</span>
+			</div>
+		`;
 		resultsContainer.append(result);
 	});
 }
@@ -524,6 +568,7 @@ function openPlayer(channelId, streamUrl, channelName, channelMeta) {
 function initHLSPlayer(videoElement, streamUrl) {
 	// Stop any existing player
 	stopPlayer();
+	console.info('Playing stream:', streamUrl);
 
 	if (streamUrl.endsWith(".m3u8")) {
 		if (Hls.isSupported()) {
@@ -543,9 +588,10 @@ function initHLSPlayer(videoElement, streamUrl) {
 
 			hlsPlayer.on(Hls.Events.ERROR, function (event, data) {
 				if (data.fatal) {
-					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+					// $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+					// $('[data-testid="player-error"]').addClass('player-modal__error--active');
 					console.error('HLS Error:', data);
+					showPlayerErrorMessage();
 				}
 			});
 
@@ -558,12 +604,10 @@ function initHLSPlayer(videoElement, streamUrl) {
 			});
 
 			videoElement.addEventListener('error', function () {
-				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-				$('[data-testid="player-error"]').addClass('player-modal__error--active');
+				showPlayerErrorMessage();
 			});
 		} else {
-			$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-			$('[data-testid="player-error"]').addClass('player-modal__error--active');
+			showPlayerErrorMessage();
 		}
 	} else if (streamUrl.endsWith(".mpd")) {
 		// DASH playback
@@ -571,8 +615,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 		player.initialize(videoElement, streamUrl, true);
 		player.on("error", (e) => {
 			console.error("DASH error", e);
-			$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-			$('[data-testid="player-error"]').addClass('player-modal__error--active');
+			showPlayerErrorMessage();
 		});
 		window.dashPlayer = player;
 	} else {
@@ -586,10 +629,14 @@ function initHLSPlayer(videoElement, streamUrl) {
 		videoElement.appendChild(source);
 		videoElement.load();
 		videoElement.play().catch(() => {
-			$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-			$('[data-testid="player-error"]').addClass('player-modal__error--active');
+			showPlayerErrorMessage();
 		});
 	}
+}
+
+async function showPlayerErrorMessage() {
+	$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+	$('[data-testid="player-error"]').addClass('player-modal__error--active');
 }
 
 /**
@@ -603,7 +650,7 @@ function stopPlayer() {
 		hlsPlayer = null;
 	}
 
-	if (video) {
+	if (typeof video.pause === 'function') {
 		video.pause();
 		video.src = '';
 		video.load();
