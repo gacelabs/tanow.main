@@ -259,7 +259,7 @@
 
                 renderChannels();
             } catch (error) {
-                console.error('Error loading data:', error);
+                // console.error('Error loading data:', error);
                 $('#channels-grid').html('<div class="empty-state"><i class="ph-duotone ph-warning-circle"></i><h3>Failed to load channels</h3><p>Please try again later.</p></div>');
             }
         }
@@ -404,10 +404,11 @@
                 const country = countriesData.find(c => c.code === channel.country);
                 const category = channel.categories && channel.categories[0] ? channel.categories[0] : 'general';
 				const defaultLogo = `https://placehold.co/320x180?text=${encodeURIComponent(channel.name.substring(0, 10))}`;
+				const channelName = channel.name.replace(/'/g, "\\'").replace(/"/g, '\\"');
                 
                 const card = `
                     <div class="channel-card" data-testid="channel-${channel.id}"
-                         onclick="playChannel('${encodeURIComponent(stream.url)}', '${escapeHtml(channel.name)}', '${country ? country.name : ''}', '${category}')">
+                         onclick="playChannel('${encodeURIComponent(stream.url)}', '${escapeHtml(channelName)}', '${country ? country.name : ''}', '${category}')">
                         <div class="channel-card__thumbnail">
                             <img src="${logosData.find(logo => logo.channel === channel.id)?.url || defaultLogo}" 
 								alt="${escapeHtml(channel.name)}" 
@@ -516,9 +517,10 @@
             results.forEach(channel => {
                 const stream = streamMap[channel.id];
                 const country = countriesData.find(c => c.code === channel.country);
+				const channelName = channel.name.replace(/'/g, "\\'").replace(/"/g, '\\"');
                 
                 resultsContainer.append(`
-                    <div class="search-result" onclick="playChannel('${encodeURIComponent(stream.url)}', '${escapeHtml(channel.name)}', '${country ? country.name : ''}', '${channel.categories ? channel.categories[0] : 'general'}'); $('[data-testid=search-overlay]').removeClass('search-overlay--active');">
+                    <div class="search-result" onclick="playChannel('${encodeURIComponent(stream.url)}', '${escapeHtml(channelName)}', '${country ? country.name : ''}', '${channel.categories ? channel.categories[0] : 'general'}'); $('[data-testid=search-overlay]').removeClass('search-overlay--active');">
                         <div style="width: 48px; height: 48px; background: var(--bg-card); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center;">
                             <i class="ph-duotone ph-television" style="color: var(--accent-primary);"></i>
                         </div>
@@ -532,8 +534,10 @@
         }
 
         function playChannel(streamUrl, channelName, countryName, category) {
+			streamUrl = streamUrl.startsWith('http%3A') ? streamUrl.replace('http%3A', 'https%3A') : streamUrl;
             const decodedUrl = decodeURIComponent(streamUrl);
-            openPlayer(decodedUrl, channelName, `${countryName} • ${capitalizeFirst(category)}`);
+			console.log('Rendering channel:', channelName, 'Stream URL:', decodedUrl);
+            openPlayer(decodedUrl, `${channelName}`, `${countryName} • ${capitalizeFirst(category)}`);
         }
 
         function openPlayer(streamUrl, channelName, channelMeta) {
@@ -566,46 +570,48 @@
 
 					hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
 						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-						videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+						videoElement.play().catch(function (e) {
+							// console.error('Autoplay blocked:', e);
+							iframePlay(videoElement, streamUrl);
+						});
 					});
 
 					hlsPlayer.on(Hls.Events.ERROR, function (event, data) {
 						if (data.fatal) {
-							$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-							$('[data-testid="player-error"]').addClass('player-modal__error--active');
-							console.error('HLS Error:', data);
+							// $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+							// $('[data-testid="player-error"]').addClass('player-modal__error--active');
+							// console.error('HLS Error:', data);
+							iframePlay(videoElement, streamUrl);
 						}
 					});
 
 				} else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-					// Native HLS support (Safari)
 					videoElement.src = streamUrl;
 					videoElement.addEventListener('loadedmetadata', function () {
 						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-						videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+						videoElement.play().catch(function (e) {
+							// console.error('Autoplay blocked:', e);
+							iframePlay(videoElement, streamUrl);
+						});
 					});
-
 					videoElement.addEventListener('error', function () {
-						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-						$('[data-testid="player-error"]').addClass('player-modal__error--active');
+						iframePlay(videoElement, streamUrl);
 					});
 				} else {
-					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+					iframePlay(videoElement, streamUrl);
 				}
 			} else if (streamUrl.endsWith(".mpd")) {
-				// DASH playback
 				const player = dashjs.MediaPlayer().create();
 				player.initialize(videoElement, streamUrl, true);
 				player.on("error", (e) => {
-					console.error("DASH error", e);
-					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+					// console.error("DASH error", e);
+					iframePlay(videoElement, streamUrl);
 				});
 				window.dashPlayer = player;
 			} else {
+				videoElement.innerHTML = '';
 				const source = document.createElement('source');
-				source.src = streamUrl;
+				source.src = streamUrl + '&profilesFromStream=true';
 				if (streamUrl.endsWith('.mp4')) {
 					source.type = 'video/mp4';
 				} else {
@@ -613,9 +619,9 @@
 				}
 				videoElement.appendChild(source);
 				videoElement.load();
-				videoElement.play().catch(() => {
-					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+				videoElement.play().catch((e) => {
+					// console.error('Video playback error:', e);
+					iframePlay(videoElement, streamUrl);
 				});
 			}
         }
@@ -634,9 +640,37 @@
         }
 
         function closePlayer() {
+			$('.player-modal__video-wrapper').find('iframe').replaceWith('<video id="video-player" class="player-modal__video" controls autoplay muted playsinline data-testid="video-player">');
             $('[data-testid="player-modal"]').removeClass('player-modal--active');
             stopPlayer();
         }
+
+		function iframePlay(videoElement, streamUrl) {
+			$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+			var iframe = document.createElement('iframe');
+			iframe.style.width = '100%';
+			iframe.style.height = '100%';
+			iframe.setAttribute('frameborder', '0');
+			iframe.setAttribute('scrolling', 'no');
+			iframe.setAttribute('allow', 'autoplay; fullscreen');
+			iframe.src = window.location.origin + '/player?src=' + encodeURIComponent(streamUrl)/* + '&profilesFromStream=true' */;
+			videoElement.replaceWith(iframe);
+			
+			let hasLoaded = false;
+			iframe.onload = () => {
+				hasLoaded = true;
+				// console.log("IFrame loaded successfully.");
+				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+			};
+			// Set a 5-second timeout
+			setTimeout(() => {
+				if (!hasLoaded) {
+					console.error("IFrame failed to load or is taking too long.");
+					$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+					$('[data-testid="player-error"]').addClass('player-modal__error--active');
+				}
+			}, 5000);
+		}
 
         function escapeHtml(text) {
             const div = document.createElement('div');

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Player</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+				background: #000;
+				font-family: Arial, sans-serif;
+			}
+		
+			video {
+				width: 100%;
+				height: 100%;
+				background: #000;
+			}
+		
+			.overlay {
+				position: absolute;
+				inset: 0;
+				display: none;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				color: #fff;
+				background: rgba(0, 0, 0, .85);
+				padding: 20px;
+			}
+		
+			.overlay h3 {
+				margin-bottom: 10px;
+				color: #ff4d4d;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<video id="video" controls autoplay muted>
+			<source type="application/x-mpegURL">
+		</video>
+
+		<div class="overlay" id="errorBox">
+			<div>
+				<h3>Playback Error</h3>
+				<p id="errorText">Unable to play this video.</p>
+			</div>
+		</div>
+
+		<script>
+			const errorBox = document.getElementById('errorBox');
+			const errorText = document.getElementById('errorText');
+			const video = document.getElementById('video');
+
+			function showError(message) {
+				errorText.textContent = message;
+				errorBox.style.display = 'block';
+			}
+
+			const params = new URLSearchParams(window.location.search);
+			const source = video.querySelector('source');
+			source.src = params.get('src');
+			// console.log('source:', source);
+			video.load();
+			video.play().catch((e) => {
+				console.error('Video playback error:', e);
+				showError(e.message);
+			});
+
+			let sourceOk = false;
+			video.addEventListener('loadedmetadata', () => {
+				sourceOk = true;
+			});
+			video.addEventListener('error', () => {
+				showError('Video source failed to load or is unsupported.');
+			});
+			setTimeout(() => {
+				if (!sourceOk) {
+					showError('Unable to load video source.');
+				}
+			}, 7000);
+		</script>
+
+	</body>
+
+</html>

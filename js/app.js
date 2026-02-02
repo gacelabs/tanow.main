@@ -501,7 +501,8 @@ function performSearch(query) {
 		
 		if (hasStream) {
 			result.addEventListener('click', () => {
-				playChannelFromSearch(channel.id, stream.url, channel.name, country ? country.name : '');
+				const channelName = channel.name.replace(/'/g, "\\'").replace(/"/g, '\\"');
+				playChannelFromSearch(channel.id, stream.url, channelName, country ? country.name : '');
 			});
 		}
 		
@@ -543,6 +544,10 @@ function playChannelFromSearch(channelId, streamUrl, channelName, channelCountry
  * Open Player Modal
  */
 function openPlayer(channelId, streamUrl, channelName, channelMeta) {
+	streamUrl = streamUrl.startsWith('http:') ? streamUrl.replace('http:', 'https:') : streamUrl;
+	const decodedUrl = decodeURIComponent(streamUrl);
+	// console.log('Rendering channel:', channelName, 'Stream URL:', decodedUrl);
+
 	const modal = $('[data-testid="player-modal"]');
 	const video = document.getElementById('video-player');
 	const defaultLogo = `https://placehold.co/320x180?text=${encodeURIComponent(channelName.substring(0, 10))}`;
@@ -583,7 +588,10 @@ function initHLSPlayer(videoElement, streamUrl) {
 
 			hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
 				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-				videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+				videoElement.play().catch(function(e) {
+					console.error('Autoplay blocked:', e);
+					iframePlay(videoElement, streamUrl);
+				});
 			});
 
 			hlsPlayer.on(Hls.Events.ERROR, function (event, data) {
@@ -591,7 +599,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 					// $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 					// $('[data-testid="player-error"]').addClass('player-modal__error--active');
 					console.error('HLS Error:', data);
-					showPlayerErrorMessage();
+					iframePlay(videoElement, streamUrl);
 				}
 			});
 
@@ -600,22 +608,25 @@ function initHLSPlayer(videoElement, streamUrl) {
 			videoElement.src = streamUrl;
 			videoElement.addEventListener('loadedmetadata', function () {
 				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-				videoElement.play().catch(e => console.log('Autoplay blocked:', e));
+				videoElement.play().catch(e => {
+					console.error('Autoplay blocked:', e);
+					iframePlay(videoElement, streamUrl);
+				});
 			});
 
 			videoElement.addEventListener('error', function () {
-				showPlayerErrorMessage();
+				iframePlay(videoElement, streamUrl);
 			});
 		} else {
-			showPlayerErrorMessage();
+			iframePlay(videoElement, streamUrl);
 		}
 	} else if (streamUrl.endsWith(".mpd")) {
 		// DASH playback
 		const player = dashjs.MediaPlayer().create();
 		player.initialize(videoElement, streamUrl, true);
 		player.on("error", (e) => {
-			console.error("DASH error", e);
-			showPlayerErrorMessage();
+			// console.error("DASH error", e);
+			iframePlay(videoElement, streamUrl);
 		});
 		window.dashPlayer = player;
 	} else {
@@ -629,9 +640,35 @@ function initHLSPlayer(videoElement, streamUrl) {
 		videoElement.appendChild(source);
 		videoElement.load();
 		videoElement.play().catch(() => {
-			showPlayerErrorMessage();
+			iframePlay(videoElement, streamUrl);
 		});
 	}
+}
+
+function iframePlay(videoElement, streamUrl) {
+	$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+	var iframe = document.createElement('iframe');
+	iframe.style.width = '100%';
+	iframe.style.height = '100%';
+	iframe.setAttribute('frameborder', '0');
+	iframe.setAttribute('scrolling', 'no');
+	iframe.setAttribute('allow', 'autoplay; fullscreen');
+	iframe.src = window.location.origin + '/player?src=' + encodeURIComponent(streamUrl);
+	videoElement.replaceWith(iframe);
+
+	let hasLoaded = false;
+	iframe.onload = () => {
+		hasLoaded = true;
+		// console.log("IFrame loaded successfully.");
+		$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+	};
+	// Set a 5-second timeout
+	setTimeout(() => {
+		if (!hasLoaded) {
+			// console.error("IFrame failed to load or is taking too long.");
+			showPlayerErrorMessage();
+		}
+	}, 5000);
 }
 
 async function showPlayerErrorMessage() {
@@ -650,7 +687,7 @@ function stopPlayer() {
 		hlsPlayer = null;
 	}
 
-	if (typeof video.pause === 'function') {
+	if (video != null && typeof video.pause === 'function') {
 		video.pause();
 		video.src = '';
 		video.load();
@@ -661,6 +698,7 @@ function stopPlayer() {
  * Close Player Modal
  */
 function closePlayer() {
+	$('.player-modal__video-wrapper').find('iframe').replaceWith('<video id="video-player" class="player-modal__video" controls autoplay muted playsinline data-testid="video-player">');
 	$('[data-testid="player-modal"]').removeClass('player-modal--active');
 	stopPlayer();
 }
