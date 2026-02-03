@@ -574,6 +574,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 	// Stop any existing player
 	stopPlayer();
 	console.info('Playing stream:', streamUrl);
+	$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 
 	if (streamUrl.endsWith(".m3u8")) {
 		if (Hls.isSupported()) {
@@ -587,7 +588,6 @@ function initHLSPlayer(videoElement, streamUrl) {
 			hlsPlayer.attachMedia(videoElement);
 
 			hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
-				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 				videoElement.play().catch(function(e) {
 					console.error('Autoplay blocked:', e);
 					iframePlay(videoElement, streamUrl);
@@ -596,8 +596,6 @@ function initHLSPlayer(videoElement, streamUrl) {
 
 			hlsPlayer.on(Hls.Events.ERROR, function (event, data) {
 				if (data.fatal) {
-					// $('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-					// $('[data-testid="player-error"]').addClass('player-modal__error--active');
 					console.error('HLS Error:', data);
 					iframePlay(videoElement, streamUrl);
 				}
@@ -607,7 +605,6 @@ function initHLSPlayer(videoElement, streamUrl) {
 			// Native HLS support (Safari)
 			videoElement.src = streamUrl;
 			videoElement.addEventListener('loadedmetadata', function () {
-				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 				videoElement.play().catch(e => {
 					console.error('Autoplay blocked:', e);
 					iframePlay(videoElement, streamUrl);
@@ -661,6 +658,7 @@ function iframePlay(videoElement, streamUrl) {
 		hasLoaded = true;
 		// console.log("IFrame loaded successfully.");
 		$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
+		$('[data-testid="player-error"]').removeClass('player-modal__error--active');
 	};
 	// Set a 5-second timeout
 	setTimeout(() => {
