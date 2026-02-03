@@ -569,6 +569,7 @@
 					hlsPlayer.attachMedia(videoElement);
 
 					hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
+						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 						videoElement.play().catch(function (e) {
 							// console.error('Autoplay blocked:', e);
 							iframePlay(videoElement, streamUrl);
@@ -585,6 +586,7 @@
 				} else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
 					videoElement.src = streamUrl;
 					videoElement.addEventListener('loadedmetadata', function () {
+						$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 						videoElement.play().catch(function (e) {
 							// console.error('Autoplay blocked:', e);
 							iframePlay(videoElement, streamUrl);
@@ -599,6 +601,7 @@
 			} else if (streamUrl.endsWith(".mpd")) {
 				const player = dashjs.MediaPlayer().create();
 				player.initialize(videoElement, streamUrl, true);
+				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 				player.on("error", (e) => {
 					// console.error("DASH error", e);
 					iframePlay(videoElement, streamUrl);
@@ -615,6 +618,7 @@
 				}
 				videoElement.appendChild(source);
 				videoElement.load();
+				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 				videoElement.play().catch((e) => {
 					// console.error('Video playback error:', e);
 					iframePlay(videoElement, streamUrl);
@@ -642,8 +646,6 @@
         }
 
 		function iframePlay(videoElement, streamUrl) {
-			$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-
 			var iframe = document.createElement('iframe');
 			iframe.style.width = '100%';
 			iframe.style.height = '100%';
@@ -657,6 +659,7 @@
 			iframe.onload = () => {
 				hasLoaded = true;
 				console.log("IFrame loaded successfully.");
+				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 			};
 			// Set a 5-second timeout
 			setTimeout(() => {

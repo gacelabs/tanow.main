@@ -545,7 +545,7 @@ function playChannelFromSearch(channelId, streamUrl, channelName, channelCountry
  */
 function openPlayer(channelId, streamUrl, channelName, channelMeta) {
 	streamUrl = streamUrl.startsWith('http:') ? streamUrl.replace('http:', 'https:') : streamUrl;
-	const decodedUrl = decodeURIComponent(streamUrl);
+	// const decodedUrl = decodeURIComponent(streamUrl);
 	// console.log('Rendering channel:', channelName, 'Stream URL:', decodedUrl);
 
 	const modal = $('[data-testid="player-modal"]');
@@ -574,8 +574,6 @@ function initHLSPlayer(videoElement, streamUrl) {
 	// Stop any existing player
 	stopPlayer();
 	console.info('Playing stream:', streamUrl);
-	$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-
 	if (streamUrl.endsWith(".m3u8")) {
 		if (Hls.isSupported()) {
 			hlsPlayer = new Hls({
@@ -588,6 +586,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 			hlsPlayer.attachMedia(videoElement);
 
 			hlsPlayer.on(Hls.Events.MANIFEST_PARSED, function () {
+				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 				videoElement.play().catch(function(e) {
 					console.error('Autoplay blocked:', e);
 					iframePlay(videoElement, streamUrl);
@@ -605,6 +604,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 			// Native HLS support (Safari)
 			videoElement.src = streamUrl;
 			videoElement.addEventListener('loadedmetadata', function () {
+				$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 				videoElement.play().catch(e => {
 					console.error('Autoplay blocked:', e);
 					iframePlay(videoElement, streamUrl);
@@ -621,6 +621,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 		// DASH playback
 		const player = dashjs.MediaPlayer().create();
 		player.initialize(videoElement, streamUrl, true);
+		$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 		player.on("error", (e) => {
 			// console.error("DASH error", e);
 			iframePlay(videoElement, streamUrl);
@@ -636,6 +637,7 @@ function initHLSPlayer(videoElement, streamUrl) {
 		}
 		videoElement.appendChild(source);
 		videoElement.load();
+		$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 		videoElement.play().catch(() => {
 			iframePlay(videoElement, streamUrl);
 		});
@@ -643,7 +645,6 @@ function initHLSPlayer(videoElement, streamUrl) {
 }
 
 function iframePlay(videoElement, streamUrl) {
-	$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
 	var iframe = document.createElement('iframe');
 	iframe.style.width = '100%';
 	iframe.style.height = '100%';
@@ -658,13 +659,11 @@ function iframePlay(videoElement, streamUrl) {
 		hasLoaded = true;
 		// console.log("IFrame loaded successfully.");
 		$('[data-testid="player-loading"]').removeClass('player-modal__loading--active');
-		$('[data-testid="player-error"]').removeClass('player-modal__error--active');
 	};
 	// Set a 5-second timeout
 	setTimeout(() => {
 		if (!hasLoaded) {
-			// console.error("IFrame failed to load or is taking too long.");
-			showPlayerErrorMessage();
+			console.error("IFrame failed to load or is taking too long.");
 		}
 	}, 5000);
 }
