@@ -1529,3 +1529,38 @@ h4 { font-size: 1.25rem; }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+
+.captcha-group {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.field-message {
+	font-size: 0.875rem;
+	margin-top: 0.5rem;
+}
+
+.field-message.error {
+	color: var(--accent-live) !important;
+	border: none !important
+}
+
+.field-message.success {
+	color: var(--accent-success) !important;
+	border: none !important
+}
+
+.error {
+	border: 1px solid var(--accent-live) !important;
+}
+
+.success {
+	border: 1px solid var(--accent-success) !important;
+}
+
+[disabled] {
+	opacity: 0.6;
+	cursor: not-allowed;
+}

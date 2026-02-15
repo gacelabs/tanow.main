@@ -112,6 +112,7 @@
                 <a href="categories" class="header__nav-link">Categories</a>
                 <a href="channels" class="header__nav-link">All Channels</a>
                 <a href="about" class="header__nav-link">About</a>
+				<a href="contact" class="header__nav-link header__nav-link--active">Contact Us</a>
             </nav>
             <div class="header__actions">
                 <button class="header__menu-btn" data-testid="mobile-menu-toggle" aria-label="Toggle menu">
@@ -136,20 +137,22 @@
 
         <section class="page-content" data-testid="contact-content">
             <div class="container">
-                <form class="contact-form" data-testid="contact-form" onsubmit="handleSubmit(event)">
+                <form class="contact-form" data-testid="contact-form">
                     <div class="form-group">
                         <label for="name">Your Name</label>
-                        <input type="text" id="name" name="name" required placeholder="John Doe" data-testid="contact-name">
+                        <input type="text" id="name" name="name" placeholder="John Doe" data-testid="contact-name">
+						<span class="field-message"></span>
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" required placeholder="john@example.com" data-testid="contact-email">
+                        <input type="email" id="email" name="email" placeholder="john@example.com" data-testid="contact-email">
+						<span class="field-message"></span>
                     </div>
                     
                     <div class="form-group">
                         <label for="subject">Subject</label>
-                        <select id="subject" name="subject" required data-testid="contact-subject">
+                        <select id="subject" name="subject" data-testid="contact-subject">
                             <option value="">Select a subject...</option>
                             <option value="general">General Inquiry</option>
                             <option value="technical">Technical Issue</option>
@@ -158,17 +161,28 @@
                             <option value="partnership">Partnership Opportunity</option>
                             <option value="other">Other</option>
                         </select>
+						<span class="field-message"></span>
                     </div>
                     
                     <div class="form-group">
                         <label for="message">Message</label>
-                        <textarea id="message" name="message" required placeholder="Tell us what's on your mind..." data-testid="contact-message"></textarea>
+                        <textarea id="message" name="message" placeholder="Tell us what's on your mind..." data-testid="contact-message"></textarea>
+						<span class="field-message"></span>
                     </div>
-                    
-                    <button type="submit" class="form-submit" data-testid="contact-submit">
-                        <i class="ph ph-paper-plane-tilt"></i>
-                        Send Message
-                    </button>
+					<div style="margin-bottom: 1rem;">
+						<input type="checkbox" id="consent" name="consent" data-testid="contact-consent">
+						<label for="consent">I consent to having this website store my submitted information so they can respond to my inquiry.</label>
+					</div>
+					
+					<div class="captcha-group">
+						<input type="text" name="honeypot" style="display:none">
+						<div class="g-recaptcha" data-sitekey="6LcOM10sAAAAAJEMWOWiiNqsiQkrAmqRnfOZZQPG"></div>
+						<span class="field-message"></span>
+						<button type="submit" class="form-submit" data-testid="contact-submit">
+							<i class="ph ph-paper-plane-tilt"></i>
+							Send Message
+						</button>
+					</div>
                 </form>
 
                 <div class="contact-info">
@@ -228,7 +242,9 @@
         </div>
     </footer>
 
-    <script src="js/jquery-3.7.1.min.js"></script>
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="../js/jquery-3.7.1.min.js"></script>
+    <script src="../js/form.js"></script>
     <script>
         $(document).ready(function() {
             $('[data-testid="mobile-menu-toggle"]').on('click', function() {
@@ -237,11 +253,75 @@
             });
         });
 
-        function handleSubmit(e) {
+		$('.contact-form').on('submit', function (e) {
             e.preventDefault();
-            alert('Thank you for your message! We will get back to you soon.');
-            e.target.reset();
-        }
+			// Clear previous errors
+			$('.form-group').removeClass('error');
+			$('.field-message').stop().hide();
+			$('.g-recaptcha > div').css({ border: 'none' });
+
+			let isValid = true;
+			const $button = $(e.target).find('button[type="submit"]');
+
+			// Validate name
+			const $name = $('#name');
+			if (!$name.val().trim()) {
+				showMessage($name, 'Please enter your name');
+				isValid = false;
+			} else if ($name.val().trim().length < 2) {
+				showMessage($name, 'Name must be at least 2 characters');
+				isValid = false;
+			}
+
+			// Validate email
+			const $email = $('#email');
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!$email.val().trim()) {
+				showMessage($email, 'Please enter your email');
+				isValid = false;
+			} else if (!emailRegex.test($email.val())) {
+				showMessage($email, 'Please enter a valid email address');
+				isValid = false;
+			}
+
+			// Validate subject
+			const $subject = $('#subject');
+			if (!$subject.val().trim()) {
+				showMessage($subject, 'Please select a subject');
+				isValid = false;
+			}
+
+			// Validate message
+			const $message = $('#message');
+			if (!$message.val().trim()) {
+				showMessage($message, 'Please tell us about your project');
+				isValid = false;
+			} else if ($message.val().trim().length < 20) {
+				showMessage($message, 'Please provide more details (at least 20 characters)');
+				isValid = false;
+			}
+
+			if (!grecaptcha.getResponse()) {
+				showMessage($('.g-recaptcha').next(), 'Please complete the reCAPTCHA verification.', 'error', true);
+				isValid = false;
+			}
+
+			if (isValid) {
+				$button.html('<i class="ph ph-upload"></i> Sending...').prop('disabled', true);
+				submitQuote(e, function () {
+					$button.html('<i class="ph ph-check"></i> Message Sent!');
+					showMessage($('.g-recaptcha').next(), 'Message sent successfully!', 'success', function () {
+						grecaptcha.reset();
+						$button.html('<i class="ph ph-paper-plane-tilt"></i> Send Message').prop('disabled', false);
+						e.target.reset();
+					});
+				}, function (message) {
+					$button.prop('disabled', false).html('<i class="ph ph-paper-plane-tilt"></i> Send Message');
+					showMessage($('.g-recaptcha').next(), message, 'error');
+					$('.g-recaptcha > div').css({ border: 'none' });
+				});
+			}
+        });
     </script>
 </body>
 </html>
